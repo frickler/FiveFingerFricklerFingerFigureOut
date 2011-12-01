@@ -1,6 +1,12 @@
 package ch.frickler.biometrie;
 
+import java.util.List;
+
+import javax.swing.JFrame;
+
+import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
+import ch.frickler.biometrie.gui.FingerPrintFrame;
 
 
 public class FiveFinger {
@@ -10,7 +16,9 @@ public class FiveFinger {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		TemplateFileParser.parseTemplateFile(TEMPLATE_FILE);
-
+		List<Template> templates = TemplateFileParser.parseTemplateFile(TEMPLATE_FILE);
+		FingerPrintFrame frame = new FingerPrintFrame();
+		frame.setTemplate(templates.get(0));
+		
 	}
 }
