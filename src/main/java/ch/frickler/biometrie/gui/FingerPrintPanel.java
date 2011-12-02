@@ -2,6 +2,9 @@ package ch.frickler.biometrie.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
@@ -19,6 +22,11 @@ public class FingerPrintPanel extends JPanel {
 	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
 	private Template template;
 	
+	
+	public FingerPrintPanel() {
+
+
+	}
     /**
      * This is the method where the line is drawn.
      *
@@ -30,7 +38,7 @@ public class FingerPrintPanel extends JPanel {
     	g.setColor(ORIGINAL_FINGERPRING_COLOR);
     	if (template != null) {
 	    	for (MinutiaPoint point : template.getMinutiaPoints()) {
-	    		g.fillOval(point.getxCoord(), point.getyCoord(), 10, 10);
+	    		g.fillOval(point.getxCoord()-3, point.getyCoord()-3, 6, 6);
 	    	}
     	}
        
