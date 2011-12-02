@@ -100,7 +100,8 @@ def plot(finger):
     x_coords = [x[1] for x in finger.getMinutiae()]
     y_coords = [y[2] for y in finger.getMinutiae()]
     plt.plot(x_coords, y_coords, 'ro')
-    plt.axis([0,finger.getWidth(),0,finger.getHeight()])
+    size = max(finger.getWidth(), finger.getHeight())
+    plt.axis([0,size,0,size])
     plt.show()   
 
 if __name__ == '__main__':
