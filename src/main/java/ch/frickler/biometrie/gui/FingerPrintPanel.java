@@ -2,30 +2,23 @@ package ch.frickler.biometrie.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import javax.swing.JFrame;
+
+import javax.swing.JPanel;
 
 import ch.frickler.biometrie.data.MinutiaPoint;
 import ch.frickler.biometrie.data.Template;
 
 
 
-public class FingerPrintFrame extends JFrame{
-	
-	private static final Color color = Color.RED;
-	private Template template;
+public class FingerPrintPanel extends JPanel {
 	
 	/**
-     * Creates a new instance of Java2DFrame
-     */
-    public FingerPrintFrame() {
-    	super("Test");
-    	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	setSize(600,600);
-    	setVisible(true);        
-    }
-    
-    
-    
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
+	private Template template;
+	
     /**
      * This is the method where the line is drawn.
      *
@@ -34,27 +27,21 @@ public class FingerPrintFrame extends JFrame{
     public void paint(Graphics g) {
     	super.paint(g);
 
-    	g.setColor(color);
+    	g.setColor(ORIGINAL_FINGERPRING_COLOR);
     	if (template != null) {
 	    	for (MinutiaPoint point : template.getMinutiaPoints()) {
 	    		g.fillOval(point.getxCoord(), point.getyCoord(), 10, 10);
 	    	}
     	}
-        
+       
     }
-
-
 
 	public Template getTemplate() {
 		return template;
 	}
 
-
-
 	public void setTemplate(Template template) {
 		this.template = template;
 		repaint();
 	}
-    
-
 }
