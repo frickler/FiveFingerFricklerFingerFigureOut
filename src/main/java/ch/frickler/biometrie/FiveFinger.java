@@ -52,9 +52,7 @@ public class FiveFinger {
 		fingerPrinter.addMouseMotionListener(new MouseMotionListener() {
 
 			public void mouseMoved(MouseEvent e) {
-				mouseInfo.setText(String.format("x: %d / y: %d", e.getX(),
-						e.getY()));
-
+				mouseInfo.setText(String.format("x: %d / y: %d", e.getX(), fingerPrinter.getHeight()- e.getY()));
 			}
 
 			public void mouseDragged(MouseEvent arg0) {
@@ -65,7 +63,6 @@ public class FiveFinger {
 
 		mouseInfo = new JLabel();
 		mouseInfo.setForeground(Color.WHITE);
-		mouseInfo.setText("test");
 
 		printPanel.add(fingerPrinter, BorderLayout.NORTH);
 		printPanel.add(mouseInfo, BorderLayout.SOUTH);

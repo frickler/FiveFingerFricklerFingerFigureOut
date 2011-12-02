@@ -29,16 +29,17 @@ public class FingerPrintPanel extends JPanel {
 	}
     /**
      * This is the method where the line is drawn.
-     *
+     * the y coordinate is flipped, because we want the origin at the bottom left corner
      * @param g The graphics object
      */
     public void paint(Graphics g) {
     	super.paint(g);
 
     	g.setColor(ORIGINAL_FINGERPRING_COLOR);
+    	int h = getHeight();
     	if (template != null) {
 	    	for (MinutiaPoint point : template.getMinutiaPoints()) {
-	    		g.fillOval(point.getxCoord()-3, point.getyCoord()-3, 6, 6);
+	    		g.fillOval(point.getxCoord()-3, h - point.getyCoord()-3, 6, 6);
 	    	}
     	}
        
