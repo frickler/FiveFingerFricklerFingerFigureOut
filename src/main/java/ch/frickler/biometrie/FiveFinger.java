@@ -30,6 +30,7 @@ public class FiveFinger {
 	private JTextArea resultArea;
 	private JLabel pagination;
 	private JLabel mouseInfo;
+	private JLabel printerTitle;
 
 	public void initGui(int width, int height, List<Template> templates) {
 		this.templates = templates;
@@ -46,6 +47,9 @@ public class FiveFinger {
 		printPanel.setBorder(new EmptyBorder(new Insets(20, 20, 20, 20)));
 		printPanel.setSize((new Dimension(Math.max(400, width), height + 40)));
 
+		printerTitle = new JLabel();
+		printerTitle.setForeground(Color.WHITE);
+		
 		fingerPrinter = new FingerPrintPanel();
 		fingerPrinter.setBackground(Color.WHITE);
 		fingerPrinter.setPreferredSize(new Dimension(width, height));
@@ -60,11 +64,13 @@ public class FiveFinger {
 
 			}
 		});
-
+	
+		
 		mouseInfo = new JLabel();
 		mouseInfo.setForeground(Color.WHITE);
 
-		printPanel.add(fingerPrinter, BorderLayout.NORTH);
+		printPanel.add(printerTitle,BorderLayout.NORTH);
+		printPanel.add(fingerPrinter, BorderLayout.CENTER);
 		printPanel.add(mouseInfo, BorderLayout.SOUTH);
 		panel.add(printPanel, BorderLayout.CENTER);
 
@@ -127,6 +133,7 @@ public class FiveFinger {
 
 	private void printFinger(int index) {
 		fingerPrinter.setTemplate(templates.get(index));
+		printerTitle.setText(String.format("template index %d",index));
 		updatePagination();
 	}
 
