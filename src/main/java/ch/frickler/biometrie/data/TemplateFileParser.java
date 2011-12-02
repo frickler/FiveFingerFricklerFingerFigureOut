@@ -1,14 +1,10 @@
 package ch.frickler.biometrie.data;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class TemplateFileParser {
 	
@@ -28,7 +24,6 @@ public class TemplateFileParser {
 	
 	public static List<Template> parseTemplateFile(String templateFilePath) throws IOException {
 		List<Template> templates = new ArrayList<Template>();
-		FileInputStream fis = new FileInputStream(new File(templateFilePath));
 		BufferedReader br = new BufferedReader(new FileReader(templateFilePath));
 		
 		String line = null;
