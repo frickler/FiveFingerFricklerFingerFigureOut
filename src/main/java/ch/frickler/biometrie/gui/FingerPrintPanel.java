@@ -20,7 +20,9 @@ public class FingerPrintPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
+	private static final Color REFERENCE_FINGERPRINT_COLOR = Color.BLUE;
 	private Template template;
+	private Template refTemplate;
 	
 	
 	public FingerPrintPanel() {
@@ -35,14 +37,18 @@ public class FingerPrintPanel extends JPanel {
     public void paint(Graphics g) {
     	super.paint(g);
 
-    	g.setColor(ORIGINAL_FINGERPRING_COLOR);
+    	paintTemplate(g, FingerPrintPanel.ORIGINAL_FINGERPRING_COLOR, template);
+    	paintTemplate(g, FingerPrintPanel.REFERENCE_FINGERPRINT_COLOR, refTemplate);
+    }
+    
+    private void paintTemplate(Graphics g, Color c, Template t){
+    	g.setColor(c);
     	int h = getHeight();
-    	if (template != null) {
-	    	for (MinutiaPoint point : template.getMinutiaPoints()) {
+    	if (t != null) {
+	    	for (MinutiaPoint point : t.getMinutiaPoints()) {
 	    		g.fillOval(point.getxCoord()-3, h - point.getyCoord()-3, 6, 6);
 	    	}
     	}
-       
     }
 
 	public Template getTemplate() {
@@ -51,6 +57,11 @@ public class FingerPrintPanel extends JPanel {
 
 	public void setTemplate(Template template) {
 		this.template = template;
+		repaint();
+	}
+	
+	public void setReferenceTemplate(Template template){
+		this.refTemplate = template;
 		repaint();
 	}
 }
