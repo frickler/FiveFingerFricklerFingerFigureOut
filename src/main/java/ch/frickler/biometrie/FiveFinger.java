@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -25,7 +24,7 @@ import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
 import ch.frickler.biometrie.gui.FingerPrintPanel;
 
-public class FiveFinger implements ComboBoxModel<String> {
+public class FiveFinger implements ComboBoxModel {
 
 	private List<Template> templates;
 	private int currentIndex = 0;
