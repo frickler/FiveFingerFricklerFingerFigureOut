@@ -2,14 +2,14 @@ package ch.frickler.biometrie.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
 import ch.frickler.biometrie.data.MinutiaPoint;
 import ch.frickler.biometrie.data.Template;
+import ch.frickler.biometrie.transformation.Homogeneouse2DMatrix;
+import ch.frickler.biometrie.transformation.TransformationFactory;
+import ch.frickler.biometrie.transformation.Vector;
 
 
 
@@ -21,12 +21,15 @@ public class FingerPrintPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
 	private static final Color REFERENCE_FINGERPRINT_COLOR = Color.BLUE;
+	private static final Color ROTATE_FINGERPRINT_COLOR = Color.GREEN;
 	private Template template;
 	private Template refTemplate;
+	private Homogeneouse2DMatrix transformation;
+	private double templateRotationAngle = 0.0;
+	
 	
 	
 	public FingerPrintPanel() {
-
 
 	}
     /**
@@ -42,11 +45,24 @@ public class FingerPrintPanel extends JPanel {
     }
     
     private void paintTemplate(Graphics g, Color c, Template t){
-    	g.setColor(c);
+    	
+    	
+    	
     	int h = getHeight();
     	if (t != null) {
 	    	for (MinutiaPoint point : t.getMinutiaPoints()) {
-	    		g.fillOval(point.getxCoord()-3, h - point.getyCoord()-3, 6, 6);
+	    		int x = point.getxCoord();
+	    		int y = point.getyCoord();
+	    		if (transformation != null) {
+		    		Vector originalVector = new Vector(x,y);
+		    		Vector result = transformation.multiply(originalVector);
+		    		int xr = (int)result.getX();
+		    		int yr = (int)result.getY();
+		    		g.setColor(ROTATE_FINGERPRINT_COLOR);
+		    		g.fillOval(xr-3, h - yr-3, 6, 6);
+	    		}
+	    		g.setColor(c);
+	    		g.fillOval(x-3, h - y-3, 6, 6);
 	    	}
     	}
     }
@@ -57,11 +73,32 @@ public class FingerPrintPanel extends JPanel {
 
 	public void setTemplate(Template template) {
 		this.template = template;
+		templateRotationAngle = 0.0;
+		repaint();
+	}
+	
+	public void rotateTemplate() {
+		templateRotationAngle += Math.PI/6;
+		if (templateRotationAngle >= 2*Math.PI) {
+			templateRotationAngle = 0.0;
+		}
+		calculateTransformation(templateRotationAngle);
 		repaint();
 	}
 	
 	public void setReferenceTemplate(Template template){
 		this.refTemplate = template;
 		repaint();
+	}
+	public void calculateTransformation(double angle) {
+		if (angle == 0.0) {
+			transformation = null;
+		} else {
+			double x = (double) getWidth()/2;
+			double y = (double) getHeight()/2;
+			transformation = TransformationFactory.createTranslation(x,y);
+			transformation = transformation.multiply(TransformationFactory.createRotation(angle));
+			transformation = transformation.multiply(TransformationFactory.createTranslation(-x, -y));
+		}
 	}
 }

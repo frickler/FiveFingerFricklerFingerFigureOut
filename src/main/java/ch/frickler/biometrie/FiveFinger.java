@@ -90,7 +90,7 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(new JLabel("Reference Template:"));
-		JComboBox<String> refTemplate = new JComboBox<String>(this);
+		JComboBox refTemplate = new JComboBox(this);
 		buttonPanel.add(refTemplate);
 		buttonPanel.add(prevButton);
 
@@ -117,6 +117,16 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(matchButton);
+		
+		JButton rotateButton = new JButton("Rotate");
+		rotateButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				rotateTemplate();
+
+			}
+		});
+		buttonPanel.add(rotateButton);
 
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -155,6 +165,10 @@ public class FiveFinger implements ComboBoxModel {
 		if (currentIndex > 0) {
 			printFinger(--currentIndex);
 		}
+	}
+	
+	private void rotateTemplate() {
+		fingerPrinter.rotateTemplate();
 	}
 
 	private void matchTemplate() {
