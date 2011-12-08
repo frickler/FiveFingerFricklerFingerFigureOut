@@ -21,11 +21,12 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
+import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
 import ch.frickler.biometrie.gui.FingerPrintPanel;
 
-public class FiveFinger implements ComboBoxModel<String> {
+public class FiveFinger implements ComboBoxModel {
 
 	private List<Template> templates;
 	private int currentIndex = 0;
@@ -91,7 +92,7 @@ public class FiveFinger implements ComboBoxModel<String> {
 			}
 		});
 		buttonPanel.add(new JLabel("Reference Template:"));
-		JComboBox<String> refTemplate = new JComboBox<String>(this);
+		JComboBox refTemplate = new JComboBox(this);
 		buttonPanel.add(refTemplate);
 		buttonPanel.add(prevButton);
 
@@ -150,18 +151,21 @@ public class FiveFinger implements ComboBoxModel<String> {
 		if (currentIndex < templates.size() - 1) {
 			printFinger(++currentIndex);
 		}
+		matchTemplate();
 	}
 
 	private void printPrevTemplate() {
 		if (currentIndex > 0) {
 			printFinger(--currentIndex);
 		}
+		matchTemplate();
 	}
 
 	private void matchTemplate() {
-		// TODO create our matching algorithm, print result in textarea
-
-		resultArea.setText("matching results:\n\n index 4 (rating 76)");
+		
+		ResultsetByNearest result = new ResultsetByNearest(templates.get(currentIndex));
+		
+		resultArea.setText(result.toStringByAngle());
 
 	}
 

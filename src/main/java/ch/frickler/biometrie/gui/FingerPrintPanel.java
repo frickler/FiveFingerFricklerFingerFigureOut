@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -45,12 +46,41 @@ public class FingerPrintPanel extends JPanel {
     	g.setColor(c);
     	int h = getHeight();
     	if (t != null) {
-	    	for (MinutiaPoint point : t.getMinutiaPoints()) {
-	    		g.fillOval(point.getxCoord()-3, h - point.getyCoord()-3, 6, 6);
+    		
+    		List<MinutiaPoint> ps =  t.getMinutiaPoints();
+    		int max = ps.size();
+	    	for (MinutiaPoint current : t.getMinutiaPoints()) {
+
+	    		g.fillOval(current.getxCoord()-3, h - current.getyCoord()-3, 6, 6);
+	    		
+	    		MinutiaPoint nearEst = getNearestPoint(t,current);
+	    		
+	    		g.drawLine(current.getxCoord(),h -  current.getyCoord(),nearEst.getxCoord(),h -  nearEst.getyCoord());
+	    		//super.repaint();
 	    	}
     	}
+    	
     }
 
+    public MinutiaPoint getNearestPoint(Template t,MinutiaPoint current){
+    	
+		double minDistance = Integer.MAX_VALUE;
+		MinutiaPoint nearEst = null;
+				
+		for (MinutiaPoint comp :  t.getMinutiaPoints()) {
+			//System.out.println("j "+j+" i "+i+" max "+max);
+			double dist = Math.sqrt(Math.pow(current.getxCoord()-comp.getxCoord(),2)+Math.pow(current.getyCoord()-comp.getyCoord(),2));
+			System.out.println(dist);
+			
+			if(dist < minDistance && !current.equals(comp)){
+				minDistance = dist;
+				nearEst = comp;
+				System.out.println("new nearest dist "+dist);
+			}
+		}
+		return nearEst;
+    }
+    
 	public Template getTemplate() {
 		return template;
 	}
