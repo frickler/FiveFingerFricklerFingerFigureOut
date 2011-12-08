@@ -74,6 +74,7 @@ public class FingerPrintPanel extends JPanel {
 	public void setTemplate(Template template) {
 		this.template = template;
 		templateRotationAngle = 0.0;
+		calculateTransformation(templateRotationAngle);
 		repaint();
 	}
 	
