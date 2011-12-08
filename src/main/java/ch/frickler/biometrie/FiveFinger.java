@@ -178,7 +178,7 @@ public class FiveFinger implements ComboBoxModel {
 		
 		ResultsetByNearest result = new ResultsetByNearest(templates.get(currentIndex));
 		
-		resultArea.setText(result.toStringByAngle());
+		resultArea.setText(result.toStringByAngle(true));
 
 	}
 

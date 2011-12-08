@@ -59,7 +59,7 @@ public class ResultsetByNearest {
 		return nearEst;
     }
     
-    public String toStringByAngle(){
+    public String toStringByAngle(boolean newLine){
     	List<Integer> angles = new ArrayList<Integer>();
     	for (int i = 0; i < getSize();i++) {
     		List<MinutiaPoint> points = getPair(i);
@@ -71,7 +71,9 @@ public class ResultsetByNearest {
     	Collections.sort(angles);
     	StringBuilder strBuild = new StringBuilder();
     	for (Integer angl : angles) {
-    		strBuild.append(angl+"\n");
+    		strBuild.append(angl+ (newLine ? "\n" : ";"));
+    		
+    			
 		}
     	
     	return strBuild.toString();
