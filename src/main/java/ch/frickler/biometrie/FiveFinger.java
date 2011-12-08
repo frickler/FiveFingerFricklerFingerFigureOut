@@ -23,14 +23,15 @@ import javax.swing.event.ListDataListener;
 import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
-import ch.frickler.biometrie.gui.FingerPrintPanel;
+import ch.frickler.biometrie.gui.FingerPrintFrame;
+import ch.frickler.biometrie.gui.HistogrammFrame;
 
 public class FiveFinger implements ComboBoxModel {
 
 	private List<Template> templates;
 	private int currentIndex = 0;
 
-	private FingerPrintPanel fingerPrinter;
+	private FingerPrintFrame fingerPrinter;
 	private JTextArea resultArea;
 	private JLabel pagination;
 	private JLabel mouseInfo;
@@ -56,7 +57,7 @@ public class FiveFinger implements ComboBoxModel {
 		printerTitle = new JLabel();
 		printerTitle.setForeground(Color.WHITE);
 
-		fingerPrinter = new FingerPrintPanel();
+		fingerPrinter = new FingerPrintFrame();
 		fingerPrinter.setBackground(Color.WHITE);
 		fingerPrinter.setPreferredSize(new Dimension(width, height));
 		fingerPrinter.addMouseMotionListener(new MouseMotionListener() {
@@ -128,6 +129,16 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(rotateButton);
+		
+		JButton showHistogramm = new JButton("Histogramm");
+		showHistogramm.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				showHistogramm();
+
+			}
+		});
+		buttonPanel.add(showHistogramm);
 
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -143,6 +154,18 @@ public class FiveFinger implements ComboBoxModel {
 
 		// init default with template
 		printFinger(currentIndex);
+	}
+
+	protected void showHistogramm() {
+		HistogrammFrame frame = new HistogrammFrame("Histogramm");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+
+		//frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
+
+		frame.pack();
+		frame.setVisible(true);
+		
 	}
 
 	private void updatePagination() {
