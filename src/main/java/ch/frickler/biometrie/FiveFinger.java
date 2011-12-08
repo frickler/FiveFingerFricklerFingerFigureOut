@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -119,6 +118,16 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(matchButton);
+		
+		JButton rotateButton = new JButton("Rotate");
+		rotateButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				rotateTemplate();
+
+			}
+		});
+		buttonPanel.add(rotateButton);
 
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -159,6 +168,10 @@ public class FiveFinger implements ComboBoxModel {
 			printFinger(--currentIndex);
 		}
 		matchTemplate();
+	}
+	
+	private void rotateTemplate() {
+		fingerPrinter.rotateTemplate();
 	}
 
 	private void matchTemplate() {
