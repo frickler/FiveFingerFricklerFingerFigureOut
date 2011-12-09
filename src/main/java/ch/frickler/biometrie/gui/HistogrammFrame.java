@@ -4,8 +4,10 @@ import java.awt.HeadlessException;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.xml.transform.Templates;
 
 import ch.frickler.biometrie.data.MinutiaNighbourPair;
+import ch.frickler.biometrie.data.Template;
 
 public class HistogrammFrame extends JFrame{
 
@@ -30,6 +32,8 @@ public class HistogrammFrame extends JFrame{
 		}
 		
 	}
+	
+
 	
 	
 	public int[] getAngleHistogramm(List<MinutiaNighbourPair> pairs){
