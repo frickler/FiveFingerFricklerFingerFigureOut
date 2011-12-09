@@ -40,7 +40,7 @@ public class FiveFinger implements ComboBoxModel {
 	private JLabel printerTitle;
 	private JTextField textCurrent = new JTextField();
 
-	private int refTemplate;
+	private int refTemplate = 60;
 
 	public void initGui(int width, int height, List<Template> templates) {
 		this.templates = templates;
@@ -108,7 +108,7 @@ public class FiveFinger implements ComboBoxModel {
 			public void actionPerformed(ActionEvent e) {
 				try{
 					int id =  Integer.parseInt(textCurrent.getText());
-					if(id >=0 && id < getSize()){
+					if(id >0 && id < FiveFinger.this.templates.size()){
 					currentIndex = id;
 					
 					printFinger(currentIndex);
@@ -196,7 +196,7 @@ public class FiveFinger implements ComboBoxModel {
 
 	private void updatePagination() {
 		textCurrent.setText(currentIndex+"");
-		pagination.setText(String.format(" from %d ",templates.size()));
+		pagination.setText(String.format(" from %d ",templates.size()-1));
 	}
 
 	private void printFinger(int index) {
@@ -256,7 +256,7 @@ public class FiveFinger implements ComboBoxModel {
 
 	@Override
 	public String getElementAt(int index) {
-		if (index == 0) {
+		if (index == 60) {
 			return "NONE";
 		} else {
 			return Integer.toString(index);
@@ -276,17 +276,17 @@ public class FiveFinger implements ComboBoxModel {
 	@Override
 	public void setSelectedItem(Object anItem) {
 		if (anItem.equals("NONE")) {
-			this.refTemplate = 0;
+			this.refTemplate = 60;
 			fingerPrinter.setReferenceTemplate(null);
 		} else {
 			this.refTemplate = Integer.parseInt((String) anItem);
-			fingerPrinter.setReferenceTemplate(templates.get(refTemplate - 1));
+			fingerPrinter.setReferenceTemplate(templates.get(refTemplate));
 		}
 	}
 
 	@Override
 	public Object getSelectedItem() {
-		if (this.refTemplate == 0) {
+		if (this.refTemplate == 60) {
 			return "NONE";
 		} else {
 			return Integer.toString(this.refTemplate);

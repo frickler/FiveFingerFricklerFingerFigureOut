@@ -45,8 +45,10 @@ public class MinutiaNighbourPair implements Comparable {
 	}
 
 	public int getAngle() {
-		return first.getAngle() - second.getAngle();
+		return Math.abs(first.getAngle() - second.getAngle());
 	}
+	
+
 
 	@Override
 	public int compareTo(Object arg1) {

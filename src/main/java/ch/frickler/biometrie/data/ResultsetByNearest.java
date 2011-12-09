@@ -16,6 +16,10 @@ public class ResultsetByNearest {
 	public MinutiaNighbourPair getPair(int i) {
 		return minutiaList.get(i);
 	}
+	
+	public List<MinutiaNighbourPair> getPairs() {
+		return minutiaList;
+	}
 
 	public ResultsetByNearest(Template template) {
 
@@ -40,7 +44,7 @@ public class ResultsetByNearest {
 			if (dist < minDistance && !current.equals(comp)) {
 				minDistance = dist;
 				nearEst = comp;
-				System.out.println("new nearest dist " + dist);
+				//System.out.println("new nearest dist " + dist);
 			}
 		}
 		return nearEst;
@@ -57,5 +61,6 @@ public class ResultsetByNearest {
 
 		return sb.toString();
 	}
+
 
 }
