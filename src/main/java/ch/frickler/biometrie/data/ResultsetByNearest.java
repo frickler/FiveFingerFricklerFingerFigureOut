@@ -46,13 +46,13 @@ public class ResultsetByNearest {
 		return nearEst;
 	}
 
-	public String toStringByAngle() {
+	public String toStringByAngle(boolean newline) {
 		StringBuilder sb = new StringBuilder();
 		
 		Collections.sort(minutiaList);
 		for (MinutiaNighbourPair np : minutiaList) {
 			
-			sb.append(np.getAngle() + " Typ 1: " + np.getFirst().getType() + " Typ 2: " + np.getSecond().getType() + "\n");
+			sb.append(np.getAngle() + " Typ 1: " + np.getFirst().getType() + " Typ 2: " + np.getSecond().getType() + (newline ? "\n" : ";"));
 		}
 
 		return sb.toString();
