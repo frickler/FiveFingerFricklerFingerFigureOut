@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
@@ -36,6 +38,7 @@ public class FiveFinger implements ComboBoxModel {
 	private JLabel pagination;
 	private JLabel mouseInfo;
 	private JLabel printerTitle;
+	private JTextField textCurrent = new JTextField();
 
 	private int refTemplate;
 
@@ -52,7 +55,7 @@ public class FiveFinger implements ComboBoxModel {
 		printPanel.setLayout(new BorderLayout());
 		printPanel.setBackground(Color.BLACK);
 		printPanel.setBorder(new EmptyBorder(new Insets(20, 20, 20, 20)));
-		printPanel.setSize((new Dimension(Math.max(400, width), height + 40)));
+		printPanel.setSize((new Dimension(Math.max(600, width), height + 40)));
 
 		printerTitle = new JLabel();
 		printerTitle.setForeground(Color.WHITE);
@@ -95,7 +98,30 @@ public class FiveFinger implements ComboBoxModel {
 		JComboBox refTemplate = new JComboBox(this);
 		buttonPanel.add(refTemplate);
 		buttonPanel.add(prevButton);
-
+		textCurrent.setSize(new Dimension(20, 20));
+		
+		textCurrent.setText(currentIndex+"");
+		
+		textCurrent.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try{
+					int id =  Integer.parseInt(textCurrent.getText());
+					if(id >=0 && id < getSize()){
+					currentIndex = id;
+					
+					printFinger(currentIndex);
+					}else{
+						textCurrent.setText(currentIndex+"");
+					}
+				}catch(Exception ex){
+					textCurrent.setText(currentIndex+"");
+				}
+				
+			}
+		});
+		buttonPanel.add(textCurrent);
 		pagination = new JLabel();
 
 		buttonPanel.add(pagination);
@@ -169,8 +195,8 @@ public class FiveFinger implements ComboBoxModel {
 	}
 
 	private void updatePagination() {
-		pagination.setText(String.format(" %d from %d ", currentIndex + 1,
-				templates.size()));
+		textCurrent.setText(currentIndex+"");
+		pagination.setText(String.format(" from %d ",templates.size()));
 	}
 
 	private void printFinger(int index) {
