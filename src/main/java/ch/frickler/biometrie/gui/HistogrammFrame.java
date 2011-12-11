@@ -1,60 +1,191 @@
 package ch.frickler.biometrie.gui;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.HeadlessException;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.xml.transform.Templates;
 
 import ch.frickler.biometrie.data.MinutiaNighbourPair;
-import ch.frickler.biometrie.data.Template;
 
-public class HistogrammFrame extends JFrame{
+public class HistogrammFrame extends JFrame {
 
-	int separation = 36; // ten pillows for 360 degree
+	private static final int SEPARATION = 36; // ten pillows for 360 degree
+	private static final int FONT_SIZE = 10;
+	private static final int BOARDER_SIZE = 35;
 	private static final long serialVersionUID = 1L;
+
+	private List<List<MinutiaNighbourPair>> pairs;
+	private int windowWidh;
+	private int windowHeight;
+	private int horiontalPaintGap;
 
 	public HistogrammFrame(String title) throws HeadlessException {
 		super(title);
-		setBounds(100, 100, 500, 200);
+		setBounds(100, 100, 500, 400);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		getContentPane().setBackground(Color.WHITE);
 	}
-	
-	
-	public void displayHistogramm(List<MinutiaNighbourPair> pairs){
-	
-		
-		int[] histogramm = getAngleHistogramm(pairs);
-		int c = 0;
-		for (int i : histogramm) {
-			//System.out.println("nr: "+c+" count: "+i);
-			System.out.println("count: "+i);
-			c++;
-		}
-		
-	}
-	
 
-	
-	
-	public int[] getAngleHistogramm(List<MinutiaNighbourPair> pairs){
-		
-		
-		
-		int[] histogramm = new int [360/separation];
-		
-		for (int i : histogramm) {
-			i = 0;
+	private void drawRotatedText(Graphics g, double x, double y, double theta,
+			String label) {
+
+		// Köt & Paste from
+		// http://greybeardedgeek.net/2009/05/15/rotated-text-in-java-swing-2d/
+		Graphics2D g2D = (Graphics2D) g;
+		AffineTransform fontAT = new AffineTransform();
+		Font theFont = g2D.getFont();
+		fontAT.rotate(theta);
+		Font theDerivedFont = theFont.deriveFont(fontAT);
+		g2D.setFont(theDerivedFont);
+		g2D.drawString(label, (int) x, (int) y);
+		g2D.setFont(theFont);
+	}
+
+	public void plotPairs(List<List<MinutiaNighbourPair>> pairs) {
+		this.pairs = pairs;
+		repaint();
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+
+		windowWidh = getContentPane().getWidth() - 2 * BOARDER_SIZE;
+		windowHeight = getContentPane().getHeight();
+
+		paintHorizontalCaption(g);
+
+		// Get maximal occurence of angles
+		int maxOccurence = getMaxOccurence();
+
+		if (maxOccurence == 0) {
+			return;
 		}
-			
-		for(MinutiaNighbourPair p : pairs){
-		
-			histogramm[p.getAngle() / separation]++;
-			
+
+		paintVerticalCaption(g, maxOccurence);
+
+		paintBars(g, maxOccurence);
+
+	}
+
+	private void paintBars(Graphics g, int maxOccurence) {
+		// Calc height of bar for one occurence
+		int barHeightPerOccurence = (windowHeight - BOARDER_SIZE)
+				/ maxOccurence;
+
+		if (pairs.size() == 0) {
+			return;
 		}
-			
+
+		// Paint bars
+		for (int i = 0; i < pairs.size(); i++) {
+			List<MinutiaNighbourPair> mp = pairs.get(i);
+			int[] histogramm = getAngleHistogramm(mp);
+			for (int j = 0; j < histogramm.length; j++) {
+				int amount = histogramm[j];
+				if (amount > 0) {
+
+					int baseColorValue = 255 / pairs.size() * i * 2;
+					Color color;
+					if ((j % 2) == 0) {
+						color = new Color(baseColorValue, 0, 255);
+					} else {
+						color = new Color(baseColorValue, 0, 200);
+					}
+
+					g.setColor(color);
+					int neightbourPairOffset = horiontalPaintGap / pairs.size();
+					int coordX = j * horiontalPaintGap + neightbourPairOffset
+							* i + BOARDER_SIZE;
+					g.fillRect(coordX, windowHeight - amount
+							* barHeightPerOccurence,
+							horiontalPaintGap / pairs.size(), amount
+									* barHeightPerOccurence);
+				}
+			}
+		}
+	}
+
+	private void paintVerticalCaption(Graphics g, int maxOccurence) {
+
+		// Paint vertical help lines
+		g.drawLine(BOARDER_SIZE - 10, windowHeight, BOARDER_SIZE - 10,
+				BOARDER_SIZE);
+		g.drawLine(BOARDER_SIZE - 12, BOARDER_SIZE, BOARDER_SIZE - 8,
+				BOARDER_SIZE);
+		g.drawLine(BOARDER_SIZE - 12, windowHeight, BOARDER_SIZE - 8,
+				windowHeight);
+
+		g.drawString(String.valueOf(maxOccurence), 10, BOARDER_SIZE + FONT_SIZE
+				/ 2);
+	}
+
+	/**
+	 * 
+	 * @return The highest amount of all (grouped) angles
+	 */
+	private int getMaxOccurence() {
+		int maxOccurence = 0;
+		for (List<MinutiaNighbourPair> minutiaPair : pairs) {
+			int[] histogramm = getAngleHistogramm(minutiaPair);
+			for (int i = 0; i < histogramm.length; i++) {
+				int occurence = histogramm[i];
+				if (occurence > maxOccurence) {
+					maxOccurence = occurence;
+				}
+			}
+		}
+		return maxOccurence;
+	}
+
+	private void paintHorizontalCaption(Graphics g) {
+		// Avoid rounding errors
+		int lineWidth = ((int) (windowWidh / SEPARATION)) * SEPARATION;
+
+		// Paint horizontal help lines
+		g.drawLine(BOARDER_SIZE, windowHeight, lineWidth + BOARDER_SIZE,
+				windowHeight);
+		horiontalPaintGap = (int) ((lineWidth) / (SEPARATION));
+		for (int i = 0; i <= SEPARATION; i++) {
+			int coordX = i * horiontalPaintGap + BOARDER_SIZE;
+			g.drawLine(coordX, windowHeight + 2, coordX, windowHeight - 2);
+		}
+
+		// Write degrees
+		Font font = new Font("Serif", Font.PLAIN, FONT_SIZE);
+		g.setFont(font);
+		drawRotatedText(g, BOARDER_SIZE - FONT_SIZE / 2, windowHeight
+				+ FONT_SIZE, Math.PI / 2, "0");
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 4) + BOARDER_SIZE
+				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
+				"90");
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 2) + BOARDER_SIZE
+				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
+				"180");
+		drawRotatedText(g, horiontalPaintGap * (3 * SEPARATION / 4)
+				+ BOARDER_SIZE - FONT_SIZE / 2, windowHeight + FONT_SIZE / 2,
+				Math.PI / 2, "270");
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION) + BOARDER_SIZE
+				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
+				"360");
+	}
+
+	public int[] getAngleHistogramm(List<MinutiaNighbourPair> pairs) {
+
+		int[] histogramm = new int[SEPARATION];
+		int gap = 360 / SEPARATION;
+
+		for (MinutiaNighbourPair p : pairs) {
+			histogramm[p.getAngle() / gap]++;
+		}
+
 		return histogramm;
-		
-		
+
 	}
 
 }

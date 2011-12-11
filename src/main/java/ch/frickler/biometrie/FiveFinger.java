@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
@@ -17,11 +17,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
+import ch.frickler.biometrie.data.MinutiaNighbourPair;
 import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
@@ -39,6 +42,9 @@ public class FiveFinger implements ComboBoxModel {
 	private JLabel mouseInfo;
 	private JLabel printerTitle;
 	private JTextField textCurrent = new JTextField();
+	
+	// TODO: insert histogramm in main window
+	private HistogrammFrame histogrammFrame = new HistogrammFrame("Histogramm");
 
 	private int refTemplate = 60;
 
@@ -155,23 +161,16 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(rotateButton);
-		
-		JButton showHistogramm = new JButton("Histogramm");
-		showHistogramm.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				showHistogramm();
-
-			}
-		});
-		buttonPanel.add(showHistogramm);
 
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
-		// add result area
+		// add result area in a scroll pane
 		resultArea = new JTextArea();
-		resultArea.setPreferredSize(new Dimension(300, 500));
-		panel.add(resultArea, BorderLayout.EAST);
+		JScrollPane sp = new JScrollPane(resultArea); 
+		sp.setPreferredSize(new Dimension(300, 500));
+		sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		panel.add(sp, BorderLayout.EAST);
 
 		frame.add(panel);
 		frame.pack();
@@ -180,18 +179,6 @@ public class FiveFinger implements ComboBoxModel {
 
 		// init default with template
 		printFinger(currentIndex);
-	}
-
-	protected void showHistogramm() {
-		HistogrammFrame frame = new HistogrammFrame("Histogramm");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-
-		//frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
-
-		frame.pack();
-		frame.setVisible(true);
-		
 	}
 
 	private void updatePagination() {
@@ -229,6 +216,18 @@ public class FiveFinger implements ComboBoxModel {
 		
 		resultArea.setText(result.toStringByAngle(true));
 
+		List<List<MinutiaNighbourPair>> mnp = new ArrayList<List<MinutiaNighbourPair>>();
+		mnp.add(result.getPairs());
+		if (fingerPrinter.getRefTemplate() != null){
+			ResultsetByNearest rmp = new ResultsetByNearest(fingerPrinter.getRefTemplate());
+			mnp.add(rmp.getPairs());
+		}
+		histogrammFrame.plotPairs(mnp);
+
+		//frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
+
+		histogrammFrame.setVisible(true);
+		histogrammFrame.repaint();
 	}
 
 	private static final String TEMPLATE_FILE = "res/test.txt";
