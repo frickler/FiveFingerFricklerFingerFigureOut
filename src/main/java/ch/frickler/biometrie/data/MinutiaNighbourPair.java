@@ -1,6 +1,6 @@
 package ch.frickler.biometrie.data;
 
-public class MinutiaNighbourPair implements Comparable {
+public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 	private MinutiaPoint first;
 	private MinutiaPoint second;
 
@@ -47,12 +47,9 @@ public class MinutiaNighbourPair implements Comparable {
 	public int getAngle() {
 		return Math.abs(first.getAngle() - second.getAngle());
 	}
-	
-
 
 	@Override
-	public int compareTo(Object arg1) {
-		MinutiaNighbourPair mnp = (MinutiaNighbourPair) arg1;
+	public int compareTo(MinutiaNighbourPair mnp) {
 		return this.getAngle() - mnp.getAngle();
 	}
 

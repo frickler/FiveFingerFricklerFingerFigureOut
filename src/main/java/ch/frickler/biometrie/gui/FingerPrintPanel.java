@@ -2,9 +2,6 @@ package ch.frickler.biometrie.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -13,7 +10,6 @@ import ch.frickler.biometrie.data.MinutiaPoint;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.transformation.Homogeneouse2DMatrix;
 import ch.frickler.biometrie.transformation.TransformationFactory;
-import ch.frickler.biometrie.transformation.Vector;
 
 
 

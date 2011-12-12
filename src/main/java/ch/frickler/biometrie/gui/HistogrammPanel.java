@@ -4,31 +4,32 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.HeadlessException;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import ch.frickler.biometrie.data.MinutiaNighbourPair;
 
-public class HistogrammFrame extends JFrame {
+public class HistogrammPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	private static final int SEPARATION = 36; // ten pillows for 360 degree
 	private static final int FONT_SIZE = 10;
 	private static final int BOARDER_SIZE = 35;
-	private static final long serialVersionUID = 1L;
+	private static final Color[] barColors = new Color[] { Color.BLUE,
+			new Color(0, 0, 200), Color.RED, new Color(200, 0, 0) };
 
-	private List<List<MinutiaNighbourPair>> pairs;
+	private List<List<MinutiaNighbourPair>> neighbourPairs;
 	private int windowWidh;
 	private int windowHeight;
 	private int horiontalPaintGap;
 
-	public HistogrammFrame(String title) throws HeadlessException {
-		super(title);
-		setBounds(100, 100, 500, 400);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		getContentPane().setBackground(Color.WHITE);
+	public HistogrammPanel() {
+		neighbourPairs = new ArrayList<List<MinutiaNighbourPair>>();
+
+		setBackground(Color.WHITE);
 	}
 
 	private void drawRotatedText(Graphics g, double x, double y, double theta,
@@ -46,17 +47,30 @@ public class HistogrammFrame extends JFrame {
 		g2D.setFont(theFont);
 	}
 
-	public void plotPairs(List<List<MinutiaNighbourPair>> pairs) {
-		this.pairs = pairs;
+	public void plotPairs(List<MinutiaNighbourPair> pairsOfSelectedTemplate,
+			List<MinutiaNighbourPair> pairsOfReferenceTemplate) {
+		neighbourPairs.clear();
+		neighbourPairs.add(pairsOfSelectedTemplate);
+		if (pairsOfReferenceTemplate != null) {
+			neighbourPairs.add(pairsOfReferenceTemplate);
+		}
 		repaint();
+	}
+
+	public void plotPairs(List<MinutiaNighbourPair> selectedTemplate) {
+		plotPairs(selectedTemplate, null);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		windowWidh = getContentPane().getWidth() - 2 * BOARDER_SIZE;
-		windowHeight = getContentPane().getHeight();
+		if (neighbourPairs.isEmpty()) {
+			return;
+		}
+
+		windowWidh = getWidth() - 2 * BOARDER_SIZE;
+		windowHeight = getHeight() - 2 * BOARDER_SIZE;
 
 		paintHorizontalCaption(g);
 
@@ -78,34 +92,26 @@ public class HistogrammFrame extends JFrame {
 		int barHeightPerOccurence = (windowHeight - BOARDER_SIZE)
 				/ maxOccurence;
 
-		if (pairs.size() == 0) {
-			return;
-		}
-
 		// Paint bars
-		for (int i = 0; i < pairs.size(); i++) {
-			List<MinutiaNighbourPair> mp = pairs.get(i);
+		for (int i = 0; i < neighbourPairs.size(); i++) {
+
+			List<MinutiaNighbourPair> mp = neighbourPairs.get(i);
 			int[] histogramm = getAngleHistogramm(mp);
 			for (int j = 0; j < histogramm.length; j++) {
 				int amount = histogramm[j];
 				if (amount > 0) {
-
-					int baseColorValue = 255 / pairs.size() * i * 2;
-					Color color;
-					if ((j % 2) == 0) {
-						color = new Color(baseColorValue, 0, 255);
-					} else {
-						color = new Color(baseColorValue, 0, 200);
-					}
+					// Take alternating color
+					Color color = barColors[i * 2 + j % 2];
 
 					g.setColor(color);
-					int neightbourPairOffset = horiontalPaintGap / pairs.size();
+					int neightbourPairOffset = horiontalPaintGap
+							/ neighbourPairs.size();
 					int coordX = j * horiontalPaintGap + neightbourPairOffset
 							* i + BOARDER_SIZE;
 					g.fillRect(coordX, windowHeight - amount
-							* barHeightPerOccurence,
-							horiontalPaintGap / pairs.size(), amount
-									* barHeightPerOccurence);
+							* barHeightPerOccurence, horiontalPaintGap
+							/ neighbourPairs.size(), amount
+							* barHeightPerOccurence);
 				}
 			}
 		}
@@ -131,7 +137,7 @@ public class HistogrammFrame extends JFrame {
 	 */
 	private int getMaxOccurence() {
 		int maxOccurence = 0;
-		for (List<MinutiaNighbourPair> minutiaPair : pairs) {
+		for (List<MinutiaNighbourPair> minutiaPair : neighbourPairs) {
 			int[] histogramm = getAngleHistogramm(minutiaPair);
 			for (int i = 0; i < histogramm.length; i++) {
 				int occurence = histogramm[i];

@@ -1,12 +1,9 @@
 package ch.frickler.biometrie.gui;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.frickler.biometrie.data.MinutiaNighbourPair;
 import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
@@ -45,9 +42,9 @@ public class ConsoleTestResultsetByNearest {
 	*/	
 		  for (Template t : templates) {
 				ResultsetByNearest near = new ResultsetByNearest(t);
-				HistogrammFrame frm = new HistogrammFrame("sdf");
+				//HistogrammPanel frm = new HistogrammPanel("sdf");
 				//frm.displayHistogramm(near.getPairs());
-				histograms.add(frm.getAngleHistogramm(near.getPairs()));
+				//histograms.add(frm.getAngleHistogramm(near.getPairs()));
 				//System.out.println("#");
 		}
 		  
@@ -80,7 +77,7 @@ public class ConsoleTestResultsetByNearest {
 				}
 				float result = match / (float)histCompare.length;
 				if(result > 0.8)
-				System.out.println("Template "+i+" mätscht zu "+result+" zu template "+compare);
+				System.out.println("Template "+i+" mï¿½tscht zu "+result+" zu template "+compare);
 			}  
 		}  
 		

@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
@@ -24,27 +23,26 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
-import ch.frickler.biometrie.data.MinutiaNighbourPair;
 import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
 import ch.frickler.biometrie.gui.FingerPrintFrame;
-import ch.frickler.biometrie.gui.HistogrammFrame;
+import ch.frickler.biometrie.gui.HistogrammPanel;
 
 public class FiveFinger implements ComboBoxModel {
+
+	private static final String TEMPLATE_FILE = "res/test.txt";
 
 	private List<Template> templates;
 	private int currentIndex = 0;
 
 	private FingerPrintFrame fingerPrinter;
+	private HistogrammPanel histogrammPanel;
 	private JTextArea resultArea;
 	private JLabel pagination;
 	private JLabel mouseInfo;
 	private JLabel printerTitle;
 	private JTextField textCurrent = new JTextField();
-	
-	// TODO: insert histogramm in main window
-	private HistogrammFrame histogrammFrame = new HistogrammFrame("Histogramm");
 
 	private int refTemplate = 60;
 
@@ -65,6 +63,7 @@ public class FiveFinger implements ComboBoxModel {
 
 		printerTitle = new JLabel();
 		printerTitle.setForeground(Color.WHITE);
+		
 
 		fingerPrinter = new FingerPrintFrame();
 		fingerPrinter.setBackground(Color.WHITE);
@@ -105,26 +104,26 @@ public class FiveFinger implements ComboBoxModel {
 		buttonPanel.add(refTemplate);
 		buttonPanel.add(prevButton);
 		textCurrent.setSize(new Dimension(20, 20));
-		
-		textCurrent.setText(currentIndex+"");
-		
+
+		textCurrent.setText(currentIndex + "");
+
 		textCurrent.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try{
-					int id =  Integer.parseInt(textCurrent.getText());
-					if(id >0 && id < FiveFinger.this.templates.size()){
-					currentIndex = id;
-					
-					printFinger(currentIndex);
-					}else{
-						textCurrent.setText(currentIndex+"");
+				try {
+					int id = Integer.parseInt(textCurrent.getText());
+					if (id > 0 && id < FiveFinger.this.templates.size()) {
+						currentIndex = id;
+
+						printFinger(currentIndex);
+					} else {
+						textCurrent.setText(currentIndex + "");
 					}
-				}catch(Exception ex){
-					textCurrent.setText(currentIndex+"");
+				} catch (Exception ex) {
+					textCurrent.setText(currentIndex + "");
 				}
-				
+
 			}
 		});
 		buttonPanel.add(textCurrent);
@@ -151,7 +150,7 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		});
 		buttonPanel.add(matchButton);
-		
+
 		JButton rotateButton = new JButton("Rotate");
 		rotateButton.addActionListener(new ActionListener() {
 
@@ -164,13 +163,21 @@ public class FiveFinger implements ComboBoxModel {
 
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
+		JPanel resultPanel = new JPanel(new BorderLayout());
+
+		histogrammPanel = new HistogrammPanel();
+		histogrammPanel.setBackground(Color.WHITE);
+		histogrammPanel.setPreferredSize(new Dimension(500, height));
+		resultPanel.add(histogrammPanel, BorderLayout.WEST);
+
 		// add result area in a scroll pane
 		resultArea = new JTextArea();
-		JScrollPane sp = new JScrollPane(resultArea); 
+		JScrollPane sp = new JScrollPane(resultArea);
 		sp.setPreferredSize(new Dimension(300, 500));
 		sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		panel.add(sp, BorderLayout.EAST);
+		resultPanel.add(sp, BorderLayout.EAST);
+		panel.add(resultPanel, BorderLayout.EAST);
 
 		frame.add(panel);
 		frame.pack();
@@ -182,14 +189,16 @@ public class FiveFinger implements ComboBoxModel {
 	}
 
 	private void updatePagination() {
-		textCurrent.setText(currentIndex+"");
-		pagination.setText(String.format(" from %d ",templates.size()-1));
+		textCurrent.setText(currentIndex + "");
+		pagination.setText(String.format(" from %d ", templates.size() - 1));
 	}
 
 	private void printFinger(int index) {
 		fingerPrinter.setTemplate(templates.get(index));
 		printerTitle.setText(String.format("template index %d", index));
 		updatePagination();
+
+		redrawHistogramm();
 	}
 
 	private void printNextTemplate() {
@@ -205,32 +214,33 @@ public class FiveFinger implements ComboBoxModel {
 		}
 		matchTemplate();
 	}
-	
+
 	private void rotateTemplate() {
 		fingerPrinter.rotateTemplate();
 	}
 
 	private void matchTemplate() {
-		
-		ResultsetByNearest result = new ResultsetByNearest(templates.get(currentIndex));
-		
+
+		ResultsetByNearest result = new ResultsetByNearest(
+				templates.get(currentIndex));
+
 		resultArea.setText(result.toStringByAngle(true));
 
-		List<List<MinutiaNighbourPair>> mnp = new ArrayList<List<MinutiaNighbourPair>>();
-		mnp.add(result.getPairs());
-		if (fingerPrinter.getRefTemplate() != null){
-			ResultsetByNearest rmp = new ResultsetByNearest(fingerPrinter.getRefTemplate());
-			mnp.add(rmp.getPairs());
-		}
-		histogrammFrame.plotPairs(mnp);
-
-		//frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
-
-		histogrammFrame.setVisible(true);
-		histogrammFrame.repaint();
 	}
 
-	private static final String TEMPLATE_FILE = "res/test.txt";
+	private void redrawHistogramm() {
+		ResultsetByNearest result = new ResultsetByNearest(
+				templates.get(currentIndex));
+
+		resultArea.setText(result.toStringByAngle(true));
+		if (fingerPrinter.getRefTemplate() != null) {
+			ResultsetByNearest rmp = new ResultsetByNearest(
+					fingerPrinter.getRefTemplate());
+			histogrammPanel.plotPairs(result.getPairs(), rmp.getPairs());
+		} else {
+			histogrammPanel.plotPairs(result.getPairs());
+		}
+	}
 
 	/**
 	 * @param args
@@ -281,6 +291,7 @@ public class FiveFinger implements ComboBoxModel {
 			this.refTemplate = Integer.parseInt((String) anItem);
 			fingerPrinter.setReferenceTemplate(templates.get(refTemplate));
 		}
+		redrawHistogramm();
 	}
 
 	@Override

@@ -1,8 +1,12 @@
 package ch.frickler.biometrie.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import ch.frickler.biometrie.data.MinutiaPoint;
@@ -38,6 +42,10 @@ public class FingerPrintFrame extends JPanel {
 	 */
 	public void paint(Graphics g) {
 		super.paint(g);
+		
+		Font font = new Font("Serif", Font.PLAIN, 10);
+		g.setFont(font);
+		g.drawString("x = RIDGE_BIFURCATION; \u25A0 = RIDGE_ENDING", 10, 10);
 
 		paintTemplate(g, FingerPrintFrame.ORIGINAL_FINGERPRING_COLOR, template);
 		paintTemplate(g, FingerPrintFrame.REFERENCE_FINGERPRINT_COLOR,
@@ -57,10 +65,25 @@ public class FingerPrintFrame extends JPanel {
 					int xr = (int) result.getX();
 					int yr = (int) result.getY();
 					g.setColor(ROTATE_FINGERPRINT_COLOR);
-					g.fillOval(xr - 3, h - yr - 3, 6, 6);
+					g.fillOval(xr - 2, h - yr - 2, 4, 4);
 				}
 				g.setColor(c);
-				g.fillOval(x - 3, h - y - 3, 6, 6);
+				// Display type
+				switch (point.getType()) {
+				case 0:// OTHER
+						// g.fillCircle(x - 3, h - y - 3, 4, 4);
+					g.fillOval(x - 2, h - y - 2, 4, 4);
+					break;
+				case 1: // RIDGE_ENDING
+					g.fillRect(x - 2, h - y - 2, 4, 4);
+					break;
+				case 2: // RIDGE_BIFURCATION
+					Graphics2D g2 = (Graphics2D) g;
+					g2.setStroke(new BasicStroke(2));
+					g2.drawLine(x - 6, h - y - 6, x, h - y);
+					g2.drawLine(x, h - y - 6, x - 6, h - y);
+					break;
+				}
 			}
 		}
 	}
