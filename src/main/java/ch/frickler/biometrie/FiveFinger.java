@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
@@ -20,13 +21,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
 import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
-import ch.frickler.biometrie.gui.FingerPrintFrame;
+import ch.frickler.biometrie.gui.FingerPrintPanel;
 import ch.frickler.biometrie.gui.HistogrammPanel;
 
 public class FiveFinger implements ComboBoxModel {
@@ -36,7 +38,7 @@ public class FiveFinger implements ComboBoxModel {
 	private List<Template> templates;
 	private int currentIndex = 0;
 
-	private FingerPrintFrame fingerPrinter;
+	private FingerPrintPanel fingerPrintPanel;
 	private HistogrammPanel histogrammPanel;
 	private JTextArea resultArea;
 	private JLabel pagination;
@@ -63,29 +65,19 @@ public class FiveFinger implements ComboBoxModel {
 
 		printerTitle = new JLabel();
 		printerTitle.setForeground(Color.WHITE);
-		
 
-		fingerPrinter = new FingerPrintFrame();
-		fingerPrinter.setBackground(Color.WHITE);
-		fingerPrinter.setPreferredSize(new Dimension(width, height));
-		fingerPrinter.addMouseMotionListener(new MouseMotionListener() {
-
-			public void mouseMoved(MouseEvent e) {
-				mouseInfo.setText(String.format("x: %d / y: %d", e.getX(),
-						fingerPrinter.getHeight() - e.getY()));
-			}
-
-			public void mouseDragged(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		FingerPrintMouseHandler mh = new FingerPrintMouseHandler();
+		fingerPrintPanel = new FingerPrintPanel();
+		fingerPrintPanel.setBackground(Color.WHITE);
+		fingerPrintPanel.setPreferredSize(new Dimension(width, height));
+		fingerPrintPanel.addMouseListener(mh);
+		fingerPrintPanel.addMouseMotionListener(mh);
 
 		mouseInfo = new JLabel();
 		mouseInfo.setForeground(Color.WHITE);
 
 		printPanel.add(printerTitle, BorderLayout.NORTH);
-		printPanel.add(fingerPrinter, BorderLayout.CENTER);
+		printPanel.add(fingerPrintPanel, BorderLayout.CENTER);
 		printPanel.add(mouseInfo, BorderLayout.SOUTH);
 		panel.add(printPanel, BorderLayout.CENTER);
 
@@ -194,7 +186,7 @@ public class FiveFinger implements ComboBoxModel {
 	}
 
 	private void printFinger(int index) {
-		fingerPrinter.setTemplate(templates.get(index));
+		fingerPrintPanel.setTemplate(templates.get(index));
 		printerTitle.setText(String.format("template index %d", index));
 		updatePagination();
 
@@ -216,7 +208,7 @@ public class FiveFinger implements ComboBoxModel {
 	}
 
 	private void rotateTemplate() {
-		fingerPrinter.rotateTemplate();
+		fingerPrintPanel.rotateTemplate();
 	}
 
 	private void matchTemplate() {
@@ -233,9 +225,9 @@ public class FiveFinger implements ComboBoxModel {
 				templates.get(currentIndex));
 
 		resultArea.setText(result.toStringByAngle(true));
-		if (fingerPrinter.getRefTemplate() != null) {
+		if (fingerPrintPanel.getRefTemplate() != null) {
 			ResultsetByNearest rmp = new ResultsetByNearest(
-					fingerPrinter.getRefTemplate());
+					fingerPrintPanel.getRefTemplate());
 			histogrammPanel.plotPairs(result.getPairs(), rmp.getPairs());
 		} else {
 			histogrammPanel.plotPairs(result.getPairs());
@@ -286,10 +278,10 @@ public class FiveFinger implements ComboBoxModel {
 	public void setSelectedItem(Object anItem) {
 		if (anItem.equals("NONE")) {
 			this.refTemplate = 60;
-			fingerPrinter.setReferenceTemplate(null);
+			fingerPrintPanel.setReferenceTemplate(null);
 		} else {
 			this.refTemplate = Integer.parseInt((String) anItem);
-			fingerPrinter.setReferenceTemplate(templates.get(refTemplate));
+			fingerPrintPanel.setReferenceTemplate(templates.get(refTemplate));
 		}
 		redrawHistogramm();
 	}
@@ -301,5 +293,57 @@ public class FiveFinger implements ComboBoxModel {
 		} else {
 			return Integer.toString(this.refTemplate);
 		}
+	}
+
+	private class FingerPrintMouseHandler implements MouseMotionListener,
+			MouseListener {
+
+		private int buttonClicked = -1; // 3 = right click, 1 = left click -1 =
+										// no click
+
+		public void mouseMoved(MouseEvent e) {
+			mouseInfo.setText(String.format("x: %d / y: %d", e.getX(),
+					fingerPrintPanel.getHeight() - e.getY()));
+		}
+
+		public void mouseDragged(MouseEvent e) {
+			System.out.println(buttonClicked);
+			if (buttonClicked == 1) {
+				fingerPrintPanel.calculateTransformation(0.0, e.getX(),
+						-e.getY());
+
+			} else if (buttonClicked == 3) {
+				fingerPrintPanel.calculateTransformation(1.0, 1, 1);
+			}
+			fingerPrintPanel.repaint();
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			buttonClicked = e.getButton();
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			buttonClicked = -1;
+		}
+
 	}
 }
