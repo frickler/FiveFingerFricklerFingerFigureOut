@@ -21,7 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
@@ -300,6 +299,8 @@ public class FiveFinger implements ComboBoxModel {
 
 		private int buttonClicked = -1; // 3 = right click, 1 = left click -1 =
 										// no click
+		private int lastX;
+		private int lastY;
 
 		public void mouseMoved(MouseEvent e) {
 			mouseInfo.setText(String.format("x: %d / y: %d", e.getX(),
@@ -307,15 +308,22 @@ public class FiveFinger implements ComboBoxModel {
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			System.out.println(buttonClicked);
+			int deltaX = e.getX()-lastX;
+			int deltaY = e.getY()-lastY;
 			if (buttonClicked == 1) {
-				fingerPrintPanel.calculateTransformation(0.0, e.getX(),
-						-e.getY());
-
+				fingerPrintPanel.calculateTransformation(0.0, deltaX,
+						-deltaY);
+				
 			} else if (buttonClicked == 3) {
-				fingerPrintPanel.calculateTransformation(1.0, 1, 1);
+				if (deltaY < 0) 
+					fingerPrintPanel.calculateTransformation(0.01, 0, 0);
+				else if (deltaY > 0)
+					fingerPrintPanel.calculateTransformation(-0.01, 0, 0);
+				
 			}
 			fingerPrintPanel.repaint();
+			lastX = e.getX();
+			lastY = e.getY();
 		}
 
 		@Override
@@ -338,6 +346,9 @@ public class FiveFinger implements ComboBoxModel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			buttonClicked = e.getButton();
+			lastX = e.getX();
+			lastY = e.getY();
+			
 		}
 
 		@Override

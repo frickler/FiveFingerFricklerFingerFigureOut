@@ -80,7 +80,7 @@ public class TemplateFileParser {
 		
 		return templates;
 	}
-
+	
 	private static int getIntValue(String line) {
 		String numberString = line.split(":")[1].trim();
 		int number = Integer.parseInt(numberString);

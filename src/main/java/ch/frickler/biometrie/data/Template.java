@@ -12,6 +12,8 @@ public class Template {
 	private int xResolution;
 	private int yResolution;
 	
+	private int center;
+	
 	private List<MinutiaPoint> minutiaPoints;
 	
 	public Template() {
@@ -56,6 +58,14 @@ public class Template {
 
 	public void addMinutiaPoint(MinutiaPoint p) {
 		minutiaPoints.add(p);
+	}
+
+	public int getCenter() {
+		return center;
+	}
+
+	public void setCenter(int center) {
+		this.center = center;
 	}
 	
 	

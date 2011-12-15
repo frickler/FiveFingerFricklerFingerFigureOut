@@ -96,6 +96,7 @@ public class FingerPrintPanel extends JPanel {
 	public void setTemplate(Template template) {
 		this.template = template;
 		templateRotationAngle = 0.0;
+		transformation = null;
 //		calculateTransformation(templateRotationAngle);
 		repaint();
 	}
@@ -119,16 +120,23 @@ public class FingerPrintPanel extends JPanel {
 	}
 
 	public void calculateTransformation(double angle, int x, int y) {
+		System.out.println("angle:" + angle + "x:" + x + " y:" + y);
 //		if (angle == 0.0) {
 //			transformation = null;
 //		} else {
-//			double x = (double) getWidth() / 2;
-//			double y = (double) getHeight() / 2;
-			transformation = TransformationFactory.createTranslation(x, y);
+			if (transformation == null) {
+				transformation = TransformationFactory.createTranslation(0, 0);
+			}
+			double xPanel = (double) getWidth() / 2;
+			double yPanel = (double) getHeight() / 2;
+			transformation = transformation.multiply(TransformationFactory.createTranslation(x, y));
+			transformation =  transformation.multiply(TransformationFactory.createTranslation(xPanel, yPanel));
 			transformation = transformation.multiply(TransformationFactory
 					.createRotation(angle));
 			transformation = transformation.multiply(TransformationFactory
-					.createTranslation(-x, -y));
-		}
-//	}
+					.createTranslation(-xPanel, -yPanel));
+			
+			
+//		}
+	}
 }
