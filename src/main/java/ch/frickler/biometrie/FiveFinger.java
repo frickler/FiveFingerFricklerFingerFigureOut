@@ -142,16 +142,6 @@ public class FiveFinger implements ComboBoxModel {
 		});
 		buttonPanel.add(matchButton);
 
-		JButton rotateButton = new JButton("Rotate");
-		rotateButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				rotateTemplate();
-
-			}
-		});
-		buttonPanel.add(rotateButton);
-
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
 		JPanel resultPanel = new JPanel(new BorderLayout());
@@ -204,10 +194,6 @@ public class FiveFinger implements ComboBoxModel {
 			printFinger(--currentIndex);
 		}
 		matchTemplate();
-	}
-
-	private void rotateTemplate() {
-		fingerPrintPanel.rotateTemplate();
 	}
 
 	private void matchTemplate() {
@@ -316,9 +302,9 @@ public class FiveFinger implements ComboBoxModel {
 				
 			} else if (buttonClicked == 3) {
 				if (deltaY < 0) 
-					fingerPrintPanel.calculateTransformation(0.01, 0, 0);
+					fingerPrintPanel.calculateTransformation(0.05, 0, 0);
 				else if (deltaY > 0)
-					fingerPrintPanel.calculateTransformation(-0.01, 0, 0);
+					fingerPrintPanel.calculateTransformation(-0.05, 0, 0);
 				
 			}
 			fingerPrintPanel.repaint();

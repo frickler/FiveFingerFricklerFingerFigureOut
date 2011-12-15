@@ -22,11 +22,9 @@ public class FingerPrintPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
 	private static final Color REFERENCE_FINGERPRINT_COLOR = Color.BLUE;
-	private static final Color ROTATE_FINGERPRINT_COLOR = Color.GREEN;
 	private Template template;
 	private Template refTemplate;
 	private Homogeneouse2DMatrix transformation;
-	private double templateRotationAngle = 0.0;
 
 	public FingerPrintPanel() {
 
@@ -46,15 +44,18 @@ public class FingerPrintPanel extends JPanel {
 		g.setFont(font);
 		g.drawString("x = RIDGE_BIFURCATION; \u25A0 = RIDGE_ENDING", 10, 10);
 
-		paintTemplate(g, FingerPrintPanel.ORIGINAL_FINGERPRING_COLOR, template,
-				transformation);
-		paintTemplate(g, FingerPrintPanel.REFERENCE_FINGERPRINT_COLOR,
-				refTemplate, null);
+		g.setColor(ORIGINAL_FINGERPRING_COLOR);
+		paintTemplate(g, template,
+				null);
+		g.setColor(REFERENCE_FINGERPRINT_COLOR);
+		paintTemplate(g,
+				refTemplate, transformation);
 	}
 
-	private void paintTemplate(Graphics g, Color c, Template t,
+	
+	private void paintTemplate(Graphics g, Template t,
 			Homogeneouse2DMatrix transformation) {
-
+		
 		int h = getHeight();
 		if (t != null) {
 			for (MinutiaPoint point : t.getMinutiaPoints()) {
@@ -63,12 +64,11 @@ public class FingerPrintPanel extends JPanel {
 				if (transformation != null) {
 					Vector originalVector = new Vector(x, y);
 					Vector result = transformation.multiply(originalVector);
-					int xr = (int) result.getX();
-					int yr = (int) result.getY();
-					g.setColor(ROTATE_FINGERPRINT_COLOR);
-					g.fillOval(xr - 2, h - yr - 2, 4, 4);
+					x = (int) result.getX();
+					y = (int) result.getY();
+					g.setColor(REFERENCE_FINGERPRINT_COLOR);
 				}
-				g.setColor(c);
+				
 				// Display type
 				switch (point.getType()) {
 				case 0:// OTHER
@@ -90,23 +90,11 @@ public class FingerPrintPanel extends JPanel {
 	}
 
 	public Template getTemplate() {
-		return template;
-	}
+		return template;	}
 
 	public void setTemplate(Template template) {
 		this.template = template;
-		templateRotationAngle = 0.0;
 		transformation = null;
-//		calculateTransformation(templateRotationAngle);
-		repaint();
-	}
-
-	public void rotateTemplate() {
-		templateRotationAngle += Math.PI / 6;
-		if (templateRotationAngle >= 2 * Math.PI) {
-			templateRotationAngle = 0.0;
-		}
-//		calculateTransformation(templateRotationAngle);
 		repaint();
 	}
 
@@ -120,16 +108,16 @@ public class FingerPrintPanel extends JPanel {
 	}
 
 	public void calculateTransformation(double angle, int x, int y) {
-		System.out.println("angle:" + angle + "x:" + x + " y:" + y);
-//		if (angle == 0.0) {
-//			transformation = null;
-//		} else {
-			if (transformation == null) {
-				transformation = TransformationFactory.createTranslation(0, 0);
-			}
+		if (transformation == null) {
+			transformation = TransformationFactory.createTranslation(0, 0);
+		}
+		if (angle == 0.0) {
+			transformation = TransformationFactory.createTranslation(x, y).multiply(transformation);
+		} else {
+
 			double xPanel = (double) getWidth() / 2;
 			double yPanel = (double) getHeight() / 2;
-			transformation = transformation.multiply(TransformationFactory.createTranslation(x, y));
+			
 			transformation =  transformation.multiply(TransformationFactory.createTranslation(xPanel, yPanel));
 			transformation = transformation.multiply(TransformationFactory
 					.createRotation(angle));
@@ -137,6 +125,7 @@ public class FingerPrintPanel extends JPanel {
 					.createTranslation(-xPanel, -yPanel));
 			
 			
-//		}
+			
+		}
 	}
 }
