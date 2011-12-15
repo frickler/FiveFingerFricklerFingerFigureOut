@@ -6,6 +6,7 @@ public class MinutiaPoint {
     private int yCoord;
     private int angle;
     private int quality;
+
 	public int getType() {
 		return type;
 	}

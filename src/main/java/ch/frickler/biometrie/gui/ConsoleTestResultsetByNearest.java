@@ -42,9 +42,9 @@ public class ConsoleTestResultsetByNearest {
 	*/	
 		  for (Template t : templates) {
 				ResultsetByNearest near = new ResultsetByNearest(t);
-				//HistogrammPanel frm = new HistogrammPanel("sdf");
-				//frm.displayHistogramm(near.getPairs());
-				//histograms.add(frm.getAngleHistogramm(near.getPairs()));
+				HistogrammPanel frm = new HistogrammPanel();
+				frm.getAngleHistogramm(near.getPairs());
+				histograms.add(frm.getAngleHistogramm(near.getPairs()));
 				//System.out.println("#");
 		}
 		  
