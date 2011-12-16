@@ -18,8 +18,8 @@ public class HistogrammPanel extends JPanel {
 	private static final int SEPARATION = 36; // ten pillows for 360 degree
 	private static final int FONT_SIZE = 10;
 	private static final int BOARDER_SIZE = 35;
-	private static final Color[] barColors = new Color[] { Color.BLUE,
-			new Color(0, 0, 200), Color.RED, new Color(200, 0, 0) };
+	private static final Color[] barColors = new Color[] {  Color.RED, new Color(200, 0, 0),Color.BLUE,
+		new Color(0, 0, 200) };
 
 	private List<List<MinutiaNighbourPair>> neighbourPairs;
 	private int windowWidh;

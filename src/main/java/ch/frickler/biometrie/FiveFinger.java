@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -44,13 +45,13 @@ public class FiveFinger implements ComboBoxModel {
 	private JLabel mouseInfo;
 	private JLabel printerTitle;
 	private JTextField textCurrent = new JTextField();
-
+	private JFrame frame;
 	private int refTemplate = 60;
 
 	public void initGui(int width, int height, List<Template> templates) {
 		this.templates = templates;
 
-		JFrame frame = new JFrame("Finger Matcher");
+		frame = new JFrame("Finger Matcher");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
@@ -165,6 +166,19 @@ public class FiveFinger implements ComboBoxModel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 
+		
+		
+		frame.addComponentListener(new java.awt.event.ComponentAdapter() 
+		{
+			public void componentResized(ComponentEvent e)
+			{
+				System.out.println("JFrame was resized");
+				fingerPrintPanel.resize();
+			}
+		});
+		
+		
+		
 		// init default with template
 		printFinger(currentIndex);
 	}
