@@ -81,10 +81,26 @@ public class FingerPrintPanel extends JPanel {
 				case 2: // RIDGE_BIFURCATION
 					Graphics2D g2 = (Graphics2D) g;
 					g2.setStroke(new BasicStroke(2));
-					g2.drawLine(x - 6, h - y - 6, x, h - y);
-					g2.drawLine(x, h - y - 6, x - 6, h - y);
+					g2.drawLine(x - 3, h - y - 3, x+3, h - y+3);
+					g2.drawLine(x+3, h - y - 3, x - 3, h - y+3);
 					break;
 				}
+				
+				
+				
+				
+				//display richtungsvektor
+				int length = 20;
+				int ydirectVect = (int)(length * Math.sin(point.getAngle()));
+				int xdirectVect = (int)(length * Math.cos(point.getAngle()));
+								
+				Vector directionVectEndpoint = new Vector(point.getxCoord()+xdirectVect, point.getyCoord()+ydirectVect);
+				if (transformation != null) {
+				directionVectEndpoint = transformation.multiply(directionVectEndpoint);
+				}
+				
+				g.drawLine(x, h - y,(int)directionVectEndpoint.getX(), h - (int)directionVectEndpoint.getY());
+				
 			}
 		}
 	}
