@@ -108,6 +108,7 @@ public class FingerPrintPanel extends JPanel {
 	}
 
 	public void calculateTransformation(double angle, int x, int y) {
+		
 		if (transformation == null) {
 			transformation = TransformationFactory.createTranslation(0, 0);
 		}
@@ -124,8 +125,16 @@ public class FingerPrintPanel extends JPanel {
 			transformation = transformation.multiply(TransformationFactory
 					.createTranslation(-xPanel, -yPanel));
 			
-			
-			
 		}
+		
+	}
+
+	public Homogeneouse2DMatrix getTransformation() {
+		return transformation;
+	}
+
+	public void setTransformation(Homogeneouse2DMatrix transformation) {
+		this.transformation = transformation;
+		repaint();
 	}
 }

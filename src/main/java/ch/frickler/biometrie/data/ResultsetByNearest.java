@@ -33,7 +33,7 @@ public class ResultsetByNearest {
 	private MinutiaPoint getNearestPoint(Template t, MinutiaPoint current) {
 
 		double minDistance = Integer.MAX_VALUE;
-		MinutiaPoint nearEst = null;
+		MinutiaPoint nearest = null;
 
 		for (MinutiaPoint comp : t.getMinutiaPoints()) {
 			double dist = Math.sqrt(Math.pow(
@@ -42,11 +42,11 @@ public class ResultsetByNearest {
 
 			if (dist < minDistance && !current.equals(comp)) {
 				minDistance = dist;
-				nearEst = comp;
+				nearest = comp;
 				//System.out.println("new nearest dist " + dist);
 			}
 		}
-		return nearEst;
+		return nearest;
 	}
 
 	public String toStringByAngle(boolean newline) {

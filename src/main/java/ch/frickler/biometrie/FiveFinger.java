@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
@@ -24,9 +25,12 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
+import ch.frickler.biometrie.data.MinutiaNighbourPair;
 import ch.frickler.biometrie.data.ResultsetByNearest;
+import ch.frickler.biometrie.data.ResultsByTransformation;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
+import ch.frickler.biometrie.data.TheFiveFingerFricklerAlgorithm;
 import ch.frickler.biometrie.gui.FingerPrintPanel;
 import ch.frickler.biometrie.gui.HistogrammPanel;
 
@@ -202,6 +206,16 @@ public class FiveFinger implements ComboBoxModel {
 				templates.get(currentIndex));
 
 		resultArea.setText(result.toStringByAngle(true));
+		
+		if (refTemplate < 60 ) {
+			
+			ResultsetByNearest referenceResults = new ResultsetByNearest(
+					templates.get(refTemplate));
+
+			ResultsByTransformation rc = new ResultsByTransformation(result.getPairs(),referenceResults.getPairs());
+			fingerPrintPanel.setTransformation(rc.getTransformation());
+			
+		}
 
 	}
 
@@ -233,6 +247,9 @@ public class FiveFinger implements ComboBoxModel {
 		}
 		FiveFinger application = new FiveFinger();
 		application.initGui(width, height, templates);
+		
+		TheFiveFingerFricklerAlgorithm tFFFA = new TheFiveFingerFricklerAlgorithm(templates);
+		tFFFA.process();
 	}
 
 	@Override

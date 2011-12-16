@@ -1,6 +1,9 @@
 package ch.frickler.biometrie.data;
 
 public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
+	/**
+	 * 
+	 */
 	private MinutiaPoint first;
 	private MinutiaPoint second;
 
@@ -10,25 +13,7 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 		this.second = second;
 	}
 
-	public int hashCode() {
-		int hashFirst = first != null ? first.hashCode() : 0;
-		int hashSecond = second != null ? second.hashCode() : 0;
 
-		return (hashFirst + hashSecond) * hashSecond + hashFirst;
-	}
-
-	public boolean equals(Object other) {
-		if (other instanceof MinutiaNighbourPair) {
-			MinutiaNighbourPair otherPair = (MinutiaNighbourPair) other;
-			return ((this.first == otherPair.first || (this.first != null
-					&& otherPair.first != null && this.first
-						.equals(otherPair.first))) && (this.second == otherPair.second || (this.second != null
-					&& otherPair.second != null && this.second
-						.equals(otherPair.second))));
-		}
-
-		return false;
-	}
 
 	@Override
 	public String toString() {
@@ -52,5 +37,38 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 	public int compareTo(MinutiaNighbourPair mnp) {
 		return this.getAngle() - mnp.getAngle();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		MinutiaNighbourPair other = (MinutiaNighbourPair)obj;
+		
+		if (first.getType() == other.first.getType() && second.getType() == other.second.getType()) {
+			//make it more flexible, like += 3 degres...
+			if (this.getAngle() == other.getAngle()) {
+				return true;
+			}
+		}
+		
+		
+		return false;
+	}
+
+
+
+	public void setFirst(MinutiaPoint first) {
+		this.first = first;
+	}
+
+
+
+	public void setSecond(MinutiaPoint second) {
+		this.second = second;
+	}
+	
 
 }

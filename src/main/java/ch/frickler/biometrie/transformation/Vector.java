@@ -30,5 +30,16 @@ public class Vector {
 		this.y = y;
 	}
 	
-	
+	public double getAngle(Vector other) {
+		double tmp1 = this.x * other.x + this.y * other.y;
+		double tmp2 = Math.sqrt(this.x*this.x + this.y*this.y) * Math.sqrt(other.x*other.x + other.y*other.y);
+		double angle = Math.acos(tmp1/tmp2);
+		//drehrichtung
+		double orientation = this.x * other.y - this.y * other.x;
+		if(orientation > 0){ 
+			angle += Math.PI;
+		}
+		
+		return angle;
+	}
 }

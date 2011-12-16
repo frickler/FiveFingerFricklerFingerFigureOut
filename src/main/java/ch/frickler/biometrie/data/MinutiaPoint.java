@@ -1,5 +1,7 @@
 package ch.frickler.biometrie.data;
 
+import ch.frickler.biometrie.transformation.Vector;
+
 public class MinutiaPoint {
     private int type;
     private int xCoord;
@@ -70,5 +72,8 @@ public class MinutiaPoint {
 		return true;
 	}
 	
+	public Vector getVector() {
+		return new Vector((double)getxCoord(),(double) getyCoord());
+	}
 	
 }
