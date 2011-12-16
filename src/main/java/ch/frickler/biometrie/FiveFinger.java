@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -48,13 +49,13 @@ public class FiveFinger implements ComboBoxModel {
 	private JLabel mouseInfo;
 	private JLabel printerTitle;
 	private JTextField textCurrent = new JTextField();
-
-	private int refTemplate = 60;
+	private JFrame frame;
+	private int refTemplate = 0;
 
 	public void initGui(int width, int height, List<Template> templates) {
 		this.templates = templates;
-
-		JFrame frame = new JFrame("Finger Matcher");
+		this.refTemplate = getSize();
+		frame = new JFrame("Finger Matcher");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
@@ -108,7 +109,7 @@ public class FiveFinger implements ComboBoxModel {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					int id = Integer.parseInt(textCurrent.getText());
-					if (id > 0 && id < FiveFinger.this.templates.size()) {
+					if (id >= 0 && id < FiveFinger.this.templates.size()) {
 						currentIndex = id;
 
 						printFinger(currentIndex);
@@ -169,6 +170,19 @@ public class FiveFinger implements ComboBoxModel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 
+		
+		
+		frame.addComponentListener(new java.awt.event.ComponentAdapter() 
+		{
+			public void componentResized(ComponentEvent e)
+			{
+				System.out.println("JFrame was resized");
+				fingerPrintPanel.resize();
+			}
+		});
+		
+		
+		
 		// init default with template
 		printFinger(currentIndex);
 	}
@@ -241,6 +255,7 @@ public class FiveFinger implements ComboBoxModel {
 				.parseTemplateFile(TEMPLATE_FILE);
 		int width = 0;
 		int height = 0;
+		
 		for (Template t : templates) {
 			width = Math.max(width, t.getImageWidth());
 			height = Math.max(height, t.getImageHeight());
@@ -259,7 +274,7 @@ public class FiveFinger implements ComboBoxModel {
 
 	@Override
 	public String getElementAt(int index) {
-		if (index == 60) {
+		if (templates.size()<=index) {
 			return "NONE";
 		} else {
 			return Integer.toString(index);
@@ -279,7 +294,7 @@ public class FiveFinger implements ComboBoxModel {
 	@Override
 	public void setSelectedItem(Object anItem) {
 		if (anItem.equals("NONE")) {
-			this.refTemplate = 60;
+			this.refTemplate = getSize();
 			fingerPrintPanel.setReferenceTemplate(null);
 		} else {
 			this.refTemplate = Integer.parseInt((String) anItem);
@@ -290,7 +305,7 @@ public class FiveFinger implements ComboBoxModel {
 
 	@Override
 	public Object getSelectedItem() {
-		if (this.refTemplate == 60) {
+		if (this.refTemplate == getSize()) {
 			return "NONE";
 		} else {
 			return Integer.toString(this.refTemplate);

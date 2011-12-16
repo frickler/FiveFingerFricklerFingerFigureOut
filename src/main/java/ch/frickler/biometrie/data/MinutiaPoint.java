@@ -18,11 +18,17 @@ public class MinutiaPoint {
 	public int getxCoord() {
 		return xCoord;
 	}
+	public int getxCoord(double scale) {
+		return (int)(xCoord * scale);
+	}
 	public void setxCoord(int xCoord) {
 		this.xCoord = xCoord;
 	}
 	public int getyCoord() {
 		return yCoord;
+	}
+	public int getyCoord(double scale) {
+		return (int)(yCoord * scale);
 	}
 	public void setyCoord(int yCoord) {
 		this.yCoord = yCoord;
