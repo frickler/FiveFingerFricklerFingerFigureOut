@@ -32,6 +32,7 @@ public class TemplateFileParser {
 		
 		while ((line = br.readLine()) != null)   {
 			if (line.contains(TEMPLATE_TAG)) {
+				System.out.println("new template: "+line);
 				template = new Template();
 				templates.add(template);
 			}
