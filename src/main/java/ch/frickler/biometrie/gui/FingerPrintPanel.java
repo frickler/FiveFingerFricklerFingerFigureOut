@@ -59,14 +59,13 @@ public class FingerPrintPanel extends JPanel {
 		int h = getHeight();
 		if (t != null) {
 			for (MinutiaPoint point : t.getMinutiaPoints()) {
-				int x = point.getxCoord(scale);
-				int y = point.getyCoord(scale);
+				int x = point.getxCoord();
+				int y = point.getyCoord();
 				if (transformation != null) {
 					Vector originalVector = new Vector(x, y);
 					Vector result = transformation.multiply(originalVector);
-					x = (int) result.getX();
-					y = (int) result.getY();
-					g.setColor(REFERENCE_FINGERPRINT_COLOR);
+					x = (int) result.getX(scale);
+					y = (int) result.getY(scale);
 				}
 
 				// Display type

@@ -30,6 +30,13 @@ public class Vector {
 		this.y = y;
 	}
 	
+	public double getX(double scale) {
+		return (int)(x * scale);
+	}
+	public double getY(double scale) {
+		return (int)(y * scale);
+	}
+	
 	public double getAngle(Vector other) {
 		double tmp1 = this.x * other.x + this.y * other.y;
 		double tmp2 = Math.sqrt(this.x*this.x + this.y*this.y) * Math.sqrt(other.x*other.x + other.y*other.y);
