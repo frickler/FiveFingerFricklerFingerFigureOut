@@ -12,10 +12,17 @@ public class ResultsByTransformation {
 	private List<MinutiaNighbourPair> mPairs;
 	private List<MinutiaNighbourPair> mReferencePairs;
 	private double matches = 0;
-	
+	private boolean logging = false;
 
 
 	private static double TOLERANCE = 3.0;
+	
+	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
+			List<MinutiaNighbourPair> pairs2, boolean logging) {
+		this(pairs,pairs2);
+		this.logging = logging;
+		
+	}
 
 	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
 			List<MinutiaNighbourPair> referencePairs) {
@@ -38,6 +45,8 @@ public class ResultsByTransformation {
 		//System.out.println(String.format("matchedPairs: %d, matchedReferencePairs: %d",mPairs.size(),mReferencePairs.size()));
 	}
 	
+
+
 	public Homogeneouse2DMatrix getTransformation() {
 		//take the first for now...
 		Homogeneouse2DMatrix bestTransformation = null;
@@ -100,7 +109,7 @@ public class ResultsByTransformation {
 		double maxAcceptedAngle = 10;
 		double typeScoreIfDoesntMatch = 0.2;
 		
-		double[] weight = { 0.4, 0.4 , 0.3 };
+		double[] weight = { 0.4, 0.4 , 0.2 };
 		
 		double scoreAngle = Math.abs(first.getAngle() - second.getAngle());
 		scoreAngle = scoreAngle > maxAcceptedAngle ? 0 : (maxAcceptedAngle -scoreAngle) /maxAcceptedAngle;
@@ -111,7 +120,8 @@ public class ResultsByTransformation {
 		double retValue = scoreAngle * weight[0] + scoreDistance * weight[1] + scoreType * weight[2];
 		
 		//todo what we do with the qualitity attribute first.getQuality()
-		System.out.println("match rate between "+first.getName()+" and "+second.getName()+" is:"+retValue);
+		if(logging)
+			System.out.println("match rate between "+first.getName()+" and "+second.getName()+" is:"+retValue);
 		return retValue;
 	}
 

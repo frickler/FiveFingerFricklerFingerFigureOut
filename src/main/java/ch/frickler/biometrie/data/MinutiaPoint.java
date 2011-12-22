@@ -13,6 +13,7 @@ public class MinutiaPoint {
     private String name;
     
 	public MinutiaPoint(int templateCount, int minutiaCount) {
+		//what a nice frickling line:
 		this.name = templateCount+"."+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqurstuvwxyz".charAt(minutiaCount);
 	}
 	public int getType() {

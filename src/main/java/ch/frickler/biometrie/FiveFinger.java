@@ -221,14 +221,13 @@ public class FiveFinger implements ComboBoxModel {
 
 		resultArea.setText(result.toStringByAngle(true));
 		
-		if (refTemplate < 60 ) {
+		if (refTemplate < getSize() ) {
 			
 			ResultsetByNearest referenceResults = new ResultsetByNearest(
 					templates.get(refTemplate));
 
-			ResultsByTransformation rc = new ResultsByTransformation(result.getPairs(),referenceResults.getPairs());
+			ResultsByTransformation rc = new ResultsByTransformation(result.getPairs(),referenceResults.getPairs(),true);
 			fingerPrintPanel.setTransformation(rc.getTransformation());
-			
 		}
 
 	}
