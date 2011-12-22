@@ -21,9 +21,10 @@ public class TheFiveFingerFricklerAlgorithm {
 					
 					ResultsByTransformation result = new ResultsByTransformation(res.getPairs(), res2.getPairs());
 					if (result.getTransformation()!= null) {
-						int z = result.getMatches();
-						if (z > 6) {
-							System.out.println(String.format("Template %d and %d are the same with %d matches",i,j,z));
+						int matchs = result.getMatches();
+						if (matchs > 6) {
+							int min  = Math.min(res.getPairs().size(),res2.getPairs().size());
+							System.out.println(String.format("Template %d and %d are the same with %d matches (%d %%) of %d",i,j,matchs,Math.round((double)matchs/(double)min*100), min));
 						}
 						
 						
