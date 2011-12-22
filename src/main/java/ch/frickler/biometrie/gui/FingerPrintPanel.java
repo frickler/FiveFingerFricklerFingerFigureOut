@@ -59,13 +59,16 @@ public class FingerPrintPanel extends JPanel {
 		int h = getHeight();
 		if (t != null) {
 			for (MinutiaPoint point : t.getMinutiaPoints()) {
-				int x = point.getxCoord();
-				int y = point.getyCoord();
+				int x = 0;
+				int y = 0;
 				if (transformation != null) {
-					Vector originalVector = new Vector(x, y);
+					Vector originalVector = new Vector(point.getxCoord(), point.getyCoord());
 					Vector result = transformation.multiply(originalVector);
 					x = (int) result.getX(scale);
 					y = (int) result.getY(scale);
+				}else{
+					x = point.getxCoord(scale);
+					 y = point.getyCoord(scale);
 				}
 
 				// Display type
@@ -90,15 +93,15 @@ public class FingerPrintPanel extends JPanel {
 				int ydirectVect = (int) (length * Math.sin(point.getAngle()));
 				int xdirectVect = (int) (length * Math.cos(point.getAngle()));
 
-				Vector directionVectEndpoint = new Vector(point.getxCoord(scale)
-						+ xdirectVect, point.getyCoord(scale) + ydirectVect);
+				Vector directionVectEndpoint = new Vector(point.getxCoord()
+						+ xdirectVect, point.getyCoord() + ydirectVect);
 				if (transformation != null) {
 					directionVectEndpoint = transformation
 							.multiply(directionVectEndpoint);
 				}
 
-				g.drawLine(x, h - y, (int) directionVectEndpoint.getX(), h
-						- (int) directionVectEndpoint.getY());
+				g.drawLine(x, h - y, (int) directionVectEndpoint.getX(scale), h
+						- (int) directionVectEndpoint.getY(scale));
 
 			}
 		}
