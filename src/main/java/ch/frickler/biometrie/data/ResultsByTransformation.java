@@ -11,7 +11,7 @@ import ch.frickler.biometrie.transformation.Vector;
 public class ResultsByTransformation {
 	private List<MinutiaNighbourPair> mPairs;
 	private List<MinutiaNighbourPair> mReferencePairs;
-	private int matches = 0;
+	private double matches = 0;
 	
 
 
@@ -45,7 +45,7 @@ public class ResultsByTransformation {
 		for (int i=0; i<mPairs.size(); i++) {
 			Homogeneouse2DMatrix matrix = analystePairs(mPairs.get(i), mReferencePairs.get(i));
 			if (matrix != null) {
-				int currentMatches = checkMatches(matrix);
+				double currentMatches = checkMatches(matrix);
 				if (bestTransformation ==null || matches < checkMatches(matrix)) {
 					bestTransformation = matrix;
 					matches = currentMatches;
@@ -56,8 +56,8 @@ public class ResultsByTransformation {
 		return bestTransformation;
 	}
 	
-	public int checkMatches(Homogeneouse2DMatrix transformation) {
-		int matches = 0;
+	public double checkMatches(Homogeneouse2DMatrix transformation) {
+		double matches = 0;
 		for (int i = 0; i<mPairs.size(); i++) {
 			Vector v1,v2,rv1,rv2;
 			
@@ -70,21 +70,55 @@ public class ResultsByTransformation {
 			
 			rv1 = transformation.multiply(rv1);
 			rv2 = transformation.multiply(rv2);
-			
-			if (isInRange(v1, rv1) && isInRange(v2, rv2)) {
-				matches++;
+			boolean thewebairway = false;
+			if(thewebairway){
+				if (isInRange(v1, rv1) && isInRange(v2, rv2)) {
+					matches++;
+				}
+			}else{
+				matches += getMatchScore(pair,referencePair);
 			}
-			
 		}
 		return matches;
 	}
 	
+	private double getMatchScore(MinutiaNighbourPair pair,
+			MinutiaNighbourPair referencePair) {
+			
+		double match1 = getMatchScore(pair.getFirst(),referencePair.getFirst());
+		double match2 = getMatchScore(pair.getSecond(),referencePair.getSecond());
+		
+		double returnValue = (match1 + match2) / 2;
+		
+		return returnValue;
+	}
+
+	private double getMatchScore(MinutiaPoint first, MinutiaPoint second) {
+		
+		// every score should be between 0-1
+		double maxAcceptedDistance = 10;
+		double maxAcceptedAngle = 10;
+		double typeScoreIfDoesntMatch = 0.2;
+		
+		double[] weight = { 0.4, 0.4 , 0.3 };
+		
+		double scoreAngle = Math.abs(first.getAngle() - second.getAngle());
+		scoreAngle = scoreAngle > maxAcceptedAngle ? 0 : (maxAcceptedAngle -scoreAngle) /maxAcceptedAngle;
+		double scoreDistance = first.getVector().getDistance(second.getVector());
+		scoreDistance = scoreDistance > maxAcceptedDistance ? 0 : (maxAcceptedDistance -scoreDistance) /maxAcceptedDistance;
+		double scoreType = first.getType() == first.getType() ? 1 : typeScoreIfDoesntMatch;
+		
+		double retValue = scoreAngle * weight[0] + scoreDistance * weight[1] + scoreType * weight[2];
+		
+		//todo what we do with the qualitity attribute first.getQuality()
+		System.out.println("match rate between "+first.getName()+" and "+second.getName()+" is:"+retValue);
+		return retValue;
+	}
+
 	private boolean isInRange (Vector r1,Vector r2)  {
 		
-		if (r1.getX() - TOLERANCE <= r2.getX() && r1.getX() + TOLERANCE >= r2.getX()) {
-			if (r1.getY() - TOLERANCE <= r2.getY() && r1.getY() + TOLERANCE >= r2.getY()) {
+		if (r1.getDistance(r2) < TOLERANCE) {
 				return true;
-			}
 		}
 		return false;
 	}
@@ -127,7 +161,7 @@ public class ResultsByTransformation {
 		return null;
 	}
 	
-	public int getMatches() {
+	public double getMatches() {
 		return matches;
 	}
 }

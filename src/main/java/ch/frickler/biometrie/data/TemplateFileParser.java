@@ -54,7 +54,7 @@ public class TemplateFileParser {
 			}
 			
 			if (line.contains(MINUTIA_INDEX)) {
-				minutiaPoint = new MinutiaPoint();
+				minutiaPoint = new MinutiaPoint(templates.size(),template.getMinutiaPoints().size());
 				template.addMinutiaPoint(minutiaPoint);
 			}
 			

@@ -49,4 +49,10 @@ public class Vector {
 		
 		return angle;
 	}
+
+	public double getDistance(Vector r2) {
+		double x = Math.abs(getX()-r2.getX());
+		double y = Math.abs(getY()-r2.getY());
+	    return Math.sqrt(Math.pow(x, 2)+Math.pow(y,2)); // pütagoras
+	}
 }

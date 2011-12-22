@@ -27,6 +27,8 @@ public class FingerPrintPanel extends JPanel {
 	private Homogeneouse2DMatrix transformation;
 	double basey = 328;
 	double basex = 228;
+	boolean printMinutiaName = true;
+	boolean printDirection = true;
 	public FingerPrintPanel() {
 
 	}
@@ -68,7 +70,7 @@ public class FingerPrintPanel extends JPanel {
 					y = (int) result.getY(scale);
 				}else{
 					x = point.getxCoord(scale);
-					 y = point.getyCoord(scale);
+					y = point.getyCoord(scale);
 				}
 
 				// Display type
@@ -87,7 +89,7 @@ public class FingerPrintPanel extends JPanel {
 					g2.drawLine(x + 3, h - y - 3, x - 3, h - y + 3);
 					break;
 				}
-
+				if(printDirection){
 				// display richtungsvektor
 				int length = 20;
 				int ydirectVect = (int) (length * Math.sin(point.getAngle()));
@@ -103,6 +105,11 @@ public class FingerPrintPanel extends JPanel {
 				g.drawLine(x, h - y, (int) directionVectEndpoint.getX(scale), h
 						- (int) directionVectEndpoint.getY(scale));
 
+				}
+				if(printMinutiaName){
+					g.drawString(point.getName(), x,h - y-4);
+				}
+				
 			}
 		}
 	}

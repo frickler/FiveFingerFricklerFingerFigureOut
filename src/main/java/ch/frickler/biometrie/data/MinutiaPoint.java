@@ -1,5 +1,7 @@
 package ch.frickler.biometrie.data;
 
+import java.nio.charset.Charset;
+
 import ch.frickler.biometrie.transformation.Vector;
 
 public class MinutiaPoint {
@@ -8,7 +10,11 @@ public class MinutiaPoint {
     private int yCoord;
     private int angle;
     private int quality;
-
+    private String name;
+    
+	public MinutiaPoint(int templateCount, int minutiaCount) {
+		this.name = templateCount+"."+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqurstuvwxyz".charAt(minutiaCount);
+	}
 	public int getType() {
 		return type;
 	}
@@ -80,6 +86,9 @@ public class MinutiaPoint {
 	
 	public Vector getVector() {
 		return new Vector((double)getxCoord(),(double) getyCoord());
+	}
+	public String getName() {
+		return this.name;
 	}
 	
 }
