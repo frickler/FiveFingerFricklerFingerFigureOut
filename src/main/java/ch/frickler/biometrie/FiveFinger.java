@@ -228,6 +228,7 @@ public class FiveFinger implements ComboBoxModel {
 
 			ResultsByTransformation rc = new ResultsByTransformation(result.getPairs(),referenceResults.getPairs(),true);
 			fingerPrintPanel.setTransformation(rc.getTransformation());
+			System.out.println("Matchrate is in Percent: "+rc.getMatchRate());
 		}
 
 	}

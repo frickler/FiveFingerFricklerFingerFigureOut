@@ -22,12 +22,10 @@ public class TheFiveFingerFricklerAlgorithm {
 					
 					ResultsByTransformation result = new ResultsByTransformation(res.getPairs(), res2.getPairs());
 					if (result.getTransformation()!= null) {
-						int matchs = (int)result.getMatches();
-						int min  = Math.min(res.getPairs().size(),res2.getPairs().size());
-						int percent = (int)Math.round((double)matchs/(double)min*100);
+						int percent = result.getMatchRate();
 										try{	
 						if (percent > 60) {		
-							System.out.println(String.format("Template %d and %d are the same with %d matches (%d %%) of %d",i,j,matchs,percent, min));
+							System.out.println(String.format("Template %d and %d are the same with %d matches (%d %%) ",i,j,result.getMatches(),percent));
 						}
 										}catch(Exception ex){
 											

@@ -174,4 +174,11 @@ public class ResultsByTransformation {
 	public double getMatches() {
 		return matches;
 	}
+
+	public int getMatchRate() {
+		int matchs = (int)getMatches();
+		int min  = Math.min(mPairs.size(),mReferencePairs.size());
+		int percent = (int)Math.round((double)matchs/(double)min*100);
+			return percent;
+	}
 }
