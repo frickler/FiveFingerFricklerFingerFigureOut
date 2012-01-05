@@ -7,6 +7,10 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 	private MinutiaPoint first;
 	private MinutiaPoint second;
 
+	private double ANGLETOLERANCE = 4;
+	private double TYPETOLERANCE = 1;
+	private double DISTANCETOLERANCE = 10;
+	
 	public MinutiaNighbourPair(MinutiaPoint first, MinutiaPoint second) {
 		super();
 		this.first = first;
@@ -69,6 +73,43 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 
 	public void setSecond(MinutiaPoint second) {
 		this.second = second;
+	}
+
+
+
+	public double compareFuzzy(MinutiaNighbourPair obj, boolean bComparePosition) {
+		if (obj == null)
+			return 0;
+		if (getClass() != obj.getClass())
+			return 0;
+		
+		double angle = Math.abs(obj.getAngleInDegree() - this.getAngleInDegree());
+		
+		double anglescore = angle > ANGLETOLERANCE ? 0 : 1- angle/ANGLETOLERANCE;
+		
+		double typescore = 0;
+				
+		if (first.getType() == obj.first.getType() && second.getType() == obj.second.getType()) {
+			typescore = 1;
+		}else if(first.getType() == obj.second.getType() && second.getType() == obj.first.getType()) {
+			typescore = 1;
+		}else{
+			//TODO more fuzzy,
+			typescore = 0.3;
+		}
+		
+		double[] weight = new double[] {0.9, 0.1};
+		
+		double[] scores = new double[] {anglescore,typescore};
+		
+		try {
+			return FuzzyMachine.geneateFuzzyValue(weight,scores);
+		} catch (FuzzyMachineException e) {
+			e.printStackTrace();
+			//TODO not so nice programming
+			return 0;
+		}
+		
 	}
 	
 

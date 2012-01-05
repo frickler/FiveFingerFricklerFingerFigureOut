@@ -9,13 +9,15 @@ import ch.frickler.biometrie.transformation.TransformationFactory;
 import ch.frickler.biometrie.transformation.Vector;
 
 public class ResultsByTransformation {
+	private List<MinutiaNighbourPair> lstTempalatePairs;
+	private List<MinutiaNighbourPair> lstReferencePairs;
 	private List<MinutiaNighbourPair> mPairs;
 	private List<MinutiaNighbourPair> mReferencePairs;
 	private double matches = 0;
 	private boolean logging = false;
 
 	private static double TOLERANCE = 3.0;
-	private static double ANGLETOLERANCE = 10.0;
+	private static double FUZZYTOLERANCE = 0.9; // 0 = bad, 1.0 very equal
 
 	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
 			List<MinutiaNighbourPair> pairs2, boolean logging) {
@@ -26,6 +28,9 @@ public class ResultsByTransformation {
 
 	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
 			List<MinutiaNighbourPair> referencePairs) {
+
+		lstTempalatePairs = pairs;
+		lstReferencePairs = referencePairs;
 
 		// System.out.println(String.format("pairs: %d, referencePairs: %d",pairs.size(),referencePairs.size()));
 
@@ -42,7 +47,6 @@ public class ResultsByTransformation {
 
 		}
 
-		// System.out.println(String.format("matchedPairs: %d, matchedReferencePairs: %d",mPairs.size(),mReferencePairs.size()));
 	}
 
 	public Homogeneouse2DMatrix getTransformation() {
@@ -51,15 +55,19 @@ public class ResultsByTransformation {
 		matches = 0;
 		int ibest = -1;
 		int jbest = -1;
-		for (int i = 0; i < mPairs.size(); i++) {
-			for (int j = 0; j < mReferencePairs.size(); j++) {
-				if (Math.abs(mPairs.get(i).getAngleInDegree()
-						- mReferencePairs.get(j).getAngleInDegree()) > ANGLETOLERANCE)
+		for (int i = 0; i < lstTempalatePairs.size(); i++) {
+			for (int j = 0; j < lstReferencePairs.size(); j++) {
+				double fuzzyValue = lstTempalatePairs.get(i).compareFuzzy(
+						lstReferencePairs.get(j), false);
+				//System.out.println("FuzzyValue was "+fuzzyValue);
+				if (fuzzyValue < FUZZYTOLERANCE){
+						//System.out.println("skipped");
 					// skip if the angle is not the same
 					continue;
-
-				Homogeneouse2DMatrix matrix = analystePairs(mPairs.get(i),
-						mReferencePairs.get(j));
+				}
+				
+				Homogeneouse2DMatrix matrix = analystePairs(
+						lstTempalatePairs.get(i), lstReferencePairs.get(j));
 				if (matrix != null) {
 					double currentMatches = checkMatches(matrix);
 					if (bestTransformation == null
@@ -73,15 +81,17 @@ public class ResultsByTransformation {
 			}
 		}
 		if (ibest >= 0) {
-			System.out.println("best match comparing pair:"
-					+ mPairs.get(ibest).getFirst().getName() + ":"
-					+ mPairs.get(ibest).getSecond().getName());
+			System.out.println("best match comparing pair: "
+					+ lstTempalatePairs.get(ibest).getFirst().getName() + ":"
+					+ lstTempalatePairs.get(ibest).getSecond().getName());
 			System.out.println(" to :"
-					+ mReferencePairs.get(jbest).getFirst().getName() + ":"
-					+ mReferencePairs.get(jbest).getSecond().getName());
+					+ lstReferencePairs.get(jbest).getFirst().getName() + ":"
+					+ lstReferencePairs.get(jbest).getSecond().getName());
+			
+			System.out.println("angle diff "+lstTempalatePairs.get(ibest).getAngleInDegree()+" vs. "+ lstReferencePairs.get(jbest).getAngleInDegree());
 			System.out.println(" matchrate: " + matches);
 		}
-		// System.out.println(String.format("transformation with %d matches",matches));
+
 		return bestTransformation;
 	}
 
@@ -111,19 +121,43 @@ public class ResultsByTransformation {
 		return matches;
 	}
 
+	/**
+	 * 
+	 * @param pair
+	 * @param referencePair
+	 * @return a score between 0 and 1, witch tells us how much similar these
+	 *         pairs are.
+	 */
 	private double getMatchScore(MinutiaNighbourPair pair,
 			MinutiaNighbourPair referencePair) {
+		double returnValue1 = 0;
+		double returnValue2 = 0;
+		try {
+			double match1 = getMatchScore(pair.getFirst(),
+					referencePair.getFirst());
 
-		double match1 = getMatchScore(pair.getFirst(), referencePair.getFirst());
-		double match2 = getMatchScore(pair.getSecond(),
-				referencePair.getSecond());
+			double match2 = getMatchScore(pair.getSecond(),
+					referencePair.getSecond());
+			// we do not know how the constelation is
+			// can be p1p1 = p2p1 and p1p2 = p2p2 OR
+			// can be p1p2 = p2p1 and p1p1 = p2p2
+			// so we return the better result ;-)
+			double reverse1 = getMatchScore(pair.getSecond(),
+					referencePair.getFirst());
 
-		double returnValue = (match1 + match2) / 2;
+			double reverse2 = getMatchScore(pair.getFirst(),
+					referencePair.getSecond());
 
-		return returnValue;
+			returnValue1 = (match1 + match2) / 2;
+			returnValue2 = (reverse1 + reverse2) / 2;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue1 > returnValue2 ? returnValue1 : returnValue2;
 	}
 
-	private double getMatchScore(MinutiaPoint first, MinutiaPoint second) {
+	private double getMatchScore(MinutiaPoint first, MinutiaPoint second)
+			throws Exception {
 
 		// every score should be between 0-1
 		double maxAcceptedDistance = 10;
@@ -142,8 +176,8 @@ public class ResultsByTransformation {
 		double scoreType = first.getType() == first.getType() ? 1
 				: typeScoreIfDoesntMatch;
 
-		double retValue = scoreAngle * weight[0] + scoreDistance * weight[1]
-				+ scoreType * weight[2];
+		double retValue = FuzzyMachine.geneateFuzzyValue(weight, new double[] {
+				scoreAngle, scoreDistance, scoreType });
 
 		// todo what we do with the qualitity attribute first.getQuality()
 		if (logging)
@@ -231,14 +265,13 @@ public class ResultsByTransformation {
 		transformation1 = transformation1.multiply(TransformationFactory
 				.createTranslation(-pair1point1.getX(), -pair1point1.getY()));
 
-
 		// mit dieser multiplikation sollte nun p2p2 auf p1p2 liegen kommen.
 		pair2point2 = transformation1.multiply(pair2point2);
 		// was wier hier prüfen
 		if (isInRange(pair1point2, pair2point2)) {
 			System.out
 					.println("uiui last change, but you got the rotation baby!");
-			//TODO really multitply it with it
+			// TODO really multitply it with it
 			return transformation1.multiply(translation);
 		}
 
@@ -251,7 +284,7 @@ public class ResultsByTransformation {
 
 	public int getMatchRate() {
 		int matchs = (int) getMatches();
-		int min = Math.min(mPairs.size(), mReferencePairs.size());
+		int min = Math.min(mPairs.size(), lstReferencePairs.size());
 		int percent = (int) Math.round((double) matchs / (double) min * 100);
 		return percent;
 	}

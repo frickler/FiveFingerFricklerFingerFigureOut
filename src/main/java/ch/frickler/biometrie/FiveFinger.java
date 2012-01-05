@@ -207,7 +207,9 @@ public class FiveFinger implements ComboBoxModel {
 		}
 		matchTemplate();
 	}
-
+	/**
+	 * is called is prev next or match is pushed.
+	 */
 	private void matchTemplate() {
 
 		ResultsetByNearest result = new ResultsetByNearest(
