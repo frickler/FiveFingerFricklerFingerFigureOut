@@ -2,6 +2,11 @@ package ch.frickler.biometrie.transformation;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ * maybe add some comment for that?
+ * @author kaeserst
+ *
+ */
 public class Homogeneouse2DMatrix {
 	private double a;
 	private double b;

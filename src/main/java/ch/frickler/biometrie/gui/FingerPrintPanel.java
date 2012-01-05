@@ -16,9 +16,7 @@ import ch.frickler.biometrie.transformation.Vector;
 
 public class FingerPrintPanel extends JPanel {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private static final Color ORIGINAL_FINGERPRING_COLOR = Color.RED;
 	private static final Color REFERENCE_FINGERPRINT_COLOR = Color.BLUE;

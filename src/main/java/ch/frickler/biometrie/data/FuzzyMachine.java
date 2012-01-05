@@ -25,6 +25,11 @@ public class FuzzyMachine {
 		for(int i = 0; i < scores.length;i++){
 			fuzzyValue += scores[i]*weight[i];
 		}
+		
+		if(fuzzyValue < 0 || fuzzyValue > 1){
+			throw new FuzzyMachineException("WTF? fuzzyvalue must be between 0 and 1");
+		}
+		
 		return fuzzyValue;
 	}
 	

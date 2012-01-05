@@ -60,9 +60,8 @@ public class ResultsByTransformation {
 				double fuzzyValue = lstTempalatePairs.get(i).compareFuzzy(
 						lstReferencePairs.get(j), false);
 				//System.out.println("FuzzyValue was "+fuzzyValue);
-				if (fuzzyValue < FUZZYTOLERANCE){
-						//System.out.println("skipped");
-					// skip if the angle is not the same
+				// skip if the fuzzyValue is bad
+				if (fuzzyValue < FUZZYTOLERANCE){					
 					continue;
 				}
 				
@@ -95,6 +94,12 @@ public class ResultsByTransformation {
 		return bestTransformation;
 	}
 
+	/**
+	 * TODO because know we knew our transformation we should not compare the MinutiaPairs, we should compare
+	 * the two templates.
+	 * @param transformation
+	 * @return
+	 */
 	public double checkMatches(Homogeneouse2DMatrix transformation) {
 		double matches = 0;
 		for (int i = 0; i < mPairs.size(); i++) {
@@ -229,7 +234,7 @@ public class ResultsByTransformation {
 
 		// falls die punkte nun schon in der nähe von einander sind machen wir
 		// keine rotation
-		// TODO eventuell trozdem eine roatation machen, da es möglich wäre,
+		// TODO eventuell trozdem eine rotation machen, da es möglich wäre,
 		// dass bei diesem paar der drehpunkt in der nähe ist und der
 		// unroatated punkt nur kleine abweichung aufweist.
 		if (isInRange(pair1point2, pair2point2)) {
@@ -271,7 +276,7 @@ public class ResultsByTransformation {
 		if (isInRange(pair1point2, pair2point2)) {
 			System.out
 					.println("uiui last change, but you got the rotation baby!");
-			// TODO really multitply it with it
+			// before we return we must add the translation, witch we done fist.
 			return transformation1.multiply(translation);
 		}
 

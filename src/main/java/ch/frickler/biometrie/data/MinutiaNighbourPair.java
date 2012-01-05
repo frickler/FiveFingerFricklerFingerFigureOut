@@ -94,7 +94,7 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 		}else if(first.getType() == obj.second.getType() && second.getType() == obj.first.getType()) {
 			typescore = 1;
 		}else{
-			//TODO more fuzzy,
+			//TODO this is not so a fuzzy value, any ideas?
 			typescore = 0.3;
 		}
 		
@@ -106,7 +106,7 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 			return FuzzyMachine.geneateFuzzyValue(weight,scores);
 		} catch (FuzzyMachineException e) {
 			e.printStackTrace();
-			//TODO not so nice programming
+			//TODO not so nice programmed
 			return 0;
 		}
 		

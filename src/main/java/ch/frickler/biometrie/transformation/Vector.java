@@ -42,8 +42,13 @@ public class Vector {
 		double tmp2 = Math.sqrt(this.x*this.x + this.y*this.y) * Math.sqrt(other.x*other.x + other.y*other.y);
 		double angle = Math.acos(tmp1/tmp2);
 		//drehrichtung
+		//TODO webair für was ist orientation? geht auch ohne!
+		/*
 		double orientation = this.x * other.y - this.y * other.x;
-		
+		if(orientation > 0){ 
+			angle += Math.PI;
+		}
+		*/
 		return angle;
 	}
 	
