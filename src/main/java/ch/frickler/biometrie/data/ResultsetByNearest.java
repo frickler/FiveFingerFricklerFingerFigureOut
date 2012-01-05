@@ -55,7 +55,7 @@ public class ResultsetByNearest {
 		Collections.sort(minutiaList);
 		for (MinutiaNighbourPair np : minutiaList) {
 			
-			sb.append(np.getAngle() + " Typ 1: " + np.getFirst().getType() + " Typ 2: " + np.getSecond().getType() + (newline ? "\n" : ";"));
+			sb.append(np.getAngleInDegree() + " Typ 1: " + np.getFirst().getType() + " Typ 2: " + np.getSecond().getType() + (newline ? "\n" : ";"));
 		}
 
 		return sb.toString();

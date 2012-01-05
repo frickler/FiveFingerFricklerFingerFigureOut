@@ -29,13 +29,14 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 		return second;
 	}
 
-	public int getAngle() {
+	public int getAngleInDegree() {
 		return Math.abs(first.getAngle() - second.getAngle());
 	}
+	
 
 	@Override
 	public int compareTo(MinutiaNighbourPair mnp) {
-		return this.getAngle() - mnp.getAngle();
+		return this.getAngleInDegree() - mnp.getAngleInDegree();
 	}
 	
 	@Override
@@ -49,7 +50,7 @@ public class MinutiaNighbourPair implements Comparable<MinutiaNighbourPair> {
 		
 		if (first.getType() == other.first.getType() && second.getType() == other.second.getType()) {
 			//make it more flexible, like += 3 degres...
-			if (this.getAngle() == other.getAngle()) {
+			if (this.getAngleInDegree() == other.getAngleInDegree()) {
 				return true;
 			}
 		}

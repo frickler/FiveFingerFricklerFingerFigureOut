@@ -32,6 +32,8 @@ public class TemplateFileParser {
 		
 		while ((line = br.readLine()) != null)   {
 			if (line.contains(TEMPLATE_TAG)) {
+				if(template != null)
+				System.out.println("has a MinutiaPoints count of: "+template.getMinutiaPoints().size());
 				System.out.println("new template: "+line);
 				template = new Template();
 				templates.add(template);
@@ -78,6 +80,7 @@ public class TemplateFileParser {
 				minutiaPoint.setQuality(getIntValue(line));
 			}
 		  }
+		System.out.println("has a MinutiaPoints count of: "+template.getMinutiaPoints().size());
 		
 		return templates;
 	}

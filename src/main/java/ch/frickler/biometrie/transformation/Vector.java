@@ -43,12 +43,14 @@ public class Vector {
 		double angle = Math.acos(tmp1/tmp2);
 		//drehrichtung
 		double orientation = this.x * other.y - this.y * other.x;
-		if(orientation > 0){ 
-			angle += Math.PI;
-		}
 		
 		return angle;
 	}
+	
+	public double getAngleDegree(Vector other){
+		return Math.round(getAngle(other)/(2*Math.PI)*360*100)/100;
+	}
+	
 
 	public double getDistance(Vector r2) {
 		double x = Math.abs(getX()-r2.getX());

@@ -187,7 +187,7 @@ public class HistogrammPanel extends JPanel {
 		int gap = 360 / SEPARATION;
 
 		for (MinutiaNighbourPair p : pairs) {
-			histogramm[p.getAngle() / gap]++;
+			histogramm[p.getAngleInDegree() / gap]++;
 		}
 
 		return histogramm;

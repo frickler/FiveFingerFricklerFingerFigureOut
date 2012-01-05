@@ -1,5 +1,7 @@
 package ch.frickler.biometrie.transformation;
 
+import javax.net.ssl.SSLContext;
+
 public class Homogeneouse2DMatrix {
 	private double a;
 	private double b;
@@ -86,5 +88,10 @@ public class Homogeneouse2DMatrix {
 
 	public void setTy(double ty) {
 		this.ty = ty;
+	}
+
+	public void print() {
+		System.out.println("|A:"+this.a+" , B:"+this.b+"|   x:"+this.tx);
+		System.out.println("|C:"+this.c+" , D:"+this.d+"|   y:"+this.ty);
 	}
 }

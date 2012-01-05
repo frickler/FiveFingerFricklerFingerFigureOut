@@ -11578,7 +11578,7 @@ RecordHeader of Isotemplate  60
     yCoord:             272
     minAngle:           99
     minQuality:         0
-    RecordHeader of Isotemplate   61
+RecordHeader of Isotemplate   61
     Image Width:        288
     Image Height:       384
     X Resolution:       197
@@ -11782,3 +11782,207 @@ RecordHeader of Isotemplate  60
     yCoord:             300
     minAngle:           115
     minQuality:         0
+RecordHeader of Isotemplate   61 (90° zu tem 0)				
+    Image Width	:	288
+    Image Height	:	384
+    X Resolution	:	197
+    Y Resolution	:	197
+    N Views	:	1
+  FingerViewHeader IndexNr   0		
+    fingPos	:	0
+    nView	:	0
+    imprType	:	0
+    fingQuality	:	0
+    nMinutiae	:	32
+  MinutiaIndex	:	0
+    minType	:	2
+xCoord	:	102
+yCoord	:	81
+minAngle	:	259
+    minQuality	:	0
+  MinutiaIndex	:	1
+    minType	:	2
+xCoord	:	25
+yCoord	:	212
+minAngle	:	325
+    minQuality	:	0
+  MinutiaIndex	:	2
+    minType	:	2
+xCoord	:	85
+yCoord	:	78
+minAngle	:	265
+    minQuality	:	0
+  MinutiaIndex	:	3
+    minType	:	2
+xCoord	:	49
+yCoord	:	79
+minAngle	:	281
+    minQuality	:	0
+  MinutiaIndex	:	4
+    minType	:	2
+xCoord	:	23
+yCoord	:	87
+minAngle	:	289
+    minQuality	:	0
+  MinutiaIndex	:	5
+    minType	:	2
+xCoord	:	-23
+yCoord	:	141
+minAngle	:	299
+    minQuality	:	0
+  MinutiaIndex	:	6
+    minType	:	2
+xCoord	:	-76
+yCoord	:	184
+minAngle	:	312
+    minQuality	:	0
+  MinutiaIndex	:	7
+    minType	:	2
+xCoord	:	-59
+yCoord	:	133
+minAngle	:	174
+    minQuality	:	0
+  MinutiaIndex	:	8
+    minType	:	2
+xCoord	:	-78
+yCoord	:	94
+minAngle	:	183
+    minQuality	:	0
+  MinutiaIndex	:	9
+    minType	:	2
+xCoord	:	-45
+yCoord	:	-12
+minAngle	:	292
+    minQuality	:	0
+  MinutiaIndex	:	10
+    minType	:	2
+xCoord	:	-96
+yCoord	:	74
+minAngle	:	188
+    minQuality	:	0
+  MinutiaIndex	:	11
+    minType	:	2
+xCoord	:	-57
+yCoord	:	-20
+minAngle	:	281
+    minQuality	:	0
+  MinutiaIndex	:	12
+    minType	:	2
+xCoord	:	-93
+yCoord	:	17
+minAngle	:	188
+    minQuality	:	0
+  MinutiaIndex	:	13
+    minType	:	2
+xCoord	:	-84
+yCoord	:	-4
+minAngle	:	201
+    minQuality	:	0
+  MinutiaIndex	:	14
+    minType	:	2
+xCoord	:	-113
+yCoord	:	55
+minAngle	:	193
+    minQuality	:	0
+  MinutiaIndex	:	15
+    minType	:	2
+xCoord	:	-123
+yCoord	:	9
+minAngle	:	214
+    minQuality	:	0
+  MinutiaIndex	:	16
+    minType	:	2
+xCoord	:	-160
+yCoord	:	32
+minAngle	:	212
+    minQuality	:	0
+  MinutiaIndex	:	17
+    minType	:	2
+xCoord	:	-136
+yCoord	:	-20
+minAngle	:	221
+    minQuality	:	0
+  MinutiaIndex	:	18
+    minType	:	1
+xCoord	:	9
+yCoord	:	212
+minAngle	:	320
+    minQuality	:	0
+  MinutiaIndex	:	19
+    minType	:	1
+xCoord	:	66
+yCoord	:	82
+minAngle	:	273
+    minQuality	:	0
+  MinutiaIndex	:	20
+    minType	:	1
+xCoord	:	11
+yCoord	:	200
+minAngle	:	315
+    minQuality	:	0
+  MinutiaIndex	:	21
+    minType	:	1
+xCoord	:	-2
+yCoord	:	191
+minAngle	:	310
+    minQuality	:	0
+  MinutiaIndex	:	22
+    minType	:	1
+xCoord	:	18
+yCoord	:	139
+minAngle	:	98
+    minQuality	:	0
+  MinutiaIndex	:	23
+    minType	:	1
+xCoord	:	1
+yCoord	:	160
+minAngle	:	303
+    minQuality	:	0
+  MinutiaIndex	:	24
+    minType	:	1
+xCoord	:	-20
+yCoord	:	179
+minAngle	:	308
+    minQuality	:	0
+  MinutiaIndex	:	25
+    minType	:	1
+xCoord	:	35
+yCoord	:	53
+minAngle	:	283
+    minQuality	:	0
+  MinutiaIndex	:	26
+    minType	:	1
+xCoord	:	32
+yCoord	:	27
+minAngle	:	283
+    minQuality	:	0
+  MinutiaIndex	:	27
+    minType	:	1
+xCoord	:	-54
+yCoord	:	171
+minAngle	:	305
+    minQuality	:	0
+  MinutiaIndex	:	28
+    minType	:	1
+xCoord	:	-77
+yCoord	:	-11
+minAngle	:	193
+    minQuality	:	0
+  MinutiaIndex	:	29
+    minType	:	1
+xCoord	:	-114
+yCoord	:	32
+minAngle	:	198
+    minQuality	:	0
+  MinutiaIndex	:	30
+    minType	:	1
+xCoord	:	-102
+yCoord	:	-1
+minAngle	:	212
+    minQuality	:	0
+  MinutiaIndex	:	31
+    minType	:	1
+xCoord	:	-175
+yCoord	:	91
+minAngle	:	205
+    minQuality	:	0

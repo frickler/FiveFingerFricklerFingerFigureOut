@@ -170,19 +170,13 @@ public class FiveFinger implements ComboBoxModel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 
-		
-		
-		frame.addComponentListener(new java.awt.event.ComponentAdapter() 
-		{
-			public void componentResized(ComponentEvent e)
-			{
+		frame.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
 				System.out.println("JFrame was resized");
 				fingerPrintPanel.resize();
 			}
 		});
-		
-		
-		
+
 		// init default with template
 		printFinger(currentIndex);
 	}
@@ -220,15 +214,25 @@ public class FiveFinger implements ComboBoxModel {
 				templates.get(currentIndex));
 
 		resultArea.setText(result.toStringByAngle(true));
-		
-		if (refTemplate < getSize() ) {
-			
+
+		if (refTemplate < getSize()) {
+
 			ResultsetByNearest referenceResults = new ResultsetByNearest(
 					templates.get(refTemplate));
 
-			ResultsByTransformation rc = new ResultsByTransformation(result.getPairs(),referenceResults.getPairs(),true);
+			ResultsByTransformation rc = new ResultsByTransformation(
+					result.getPairs(), referenceResults.getPairs(), true);
+
 			fingerPrintPanel.setTransformation(rc.getTransformation());
-			System.out.println("Matchrate is in Percent: "+rc.getMatchRate());
+
+			System.out.println("-------");
+			System.out.println("-- TransformationMatrix --");
+			if (rc != null) {
+				rc.printTransformation();
+				System.out.println("-------");
+				System.out.println("Matchrate is in Percent: "
+						+ rc.getMatchRate());
+			}
 		}
 
 	}
@@ -255,15 +259,16 @@ public class FiveFinger implements ComboBoxModel {
 				.parseTemplateFile(TEMPLATE_FILE);
 		int width = 0;
 		int height = 0;
-		
+
 		for (Template t : templates) {
 			width = Math.max(width, t.getImageWidth());
 			height = Math.max(height, t.getImageHeight());
 		}
 		FiveFinger application = new FiveFinger();
 		application.initGui(width, height, templates);
-		
-		TheFiveFingerFricklerAlgorithm tFFFA = new TheFiveFingerFricklerAlgorithm(templates);
+
+		TheFiveFingerFricklerAlgorithm tFFFA = new TheFiveFingerFricklerAlgorithm(
+				templates);
 		tFFFA.process();
 	}
 
@@ -274,7 +279,7 @@ public class FiveFinger implements ComboBoxModel {
 
 	@Override
 	public String getElementAt(int index) {
-		if (templates.size()<=index) {
+		if (templates.size() <= index) {
 			return "NONE";
 		} else {
 			return Integer.toString(index);
@@ -326,18 +331,17 @@ public class FiveFinger implements ComboBoxModel {
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			int deltaX = e.getX()-lastX;
-			int deltaY = e.getY()-lastY;
+			int deltaX = e.getX() - lastX;
+			int deltaY = e.getY() - lastY;
 			if (buttonClicked == 1) {
-				fingerPrintPanel.calculateTransformation(0.0, deltaX,
-						-deltaY);
-				
+				fingerPrintPanel.calculateTransformation(0.0, deltaX, -deltaY);
+
 			} else if (buttonClicked == 3) {
-				if (deltaY < 0) 
+				if (deltaY < 0)
 					fingerPrintPanel.calculateTransformation(0.05, 0, 0);
 				else if (deltaY > 0)
 					fingerPrintPanel.calculateTransformation(-0.05, 0, 0);
-				
+
 			}
 			fingerPrintPanel.repaint();
 			lastX = e.getX();
@@ -366,7 +370,7 @@ public class FiveFinger implements ComboBoxModel {
 			buttonClicked = e.getButton();
 			lastX = e.getX();
 			lastY = e.getY();
-			
+
 		}
 
 		@Override
