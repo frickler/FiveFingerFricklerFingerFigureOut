@@ -70,7 +70,7 @@ public class ResultsByTransformation {
 				if (matrix != null) {
 					double currentMatches = checkMatches(matrix);
 					if (bestTransformation == null
-							|| matches < checkMatches(matrix)) {
+							|| matches < currentMatches) {
 						bestTransformation = matrix;
 						matches = currentMatches;
 						ibest = i;
