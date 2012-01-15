@@ -1,6 +1,5 @@
 package ch.frickler.biometrie.data;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,22 +14,31 @@ public class ResultsByTransformation {
 	private List<MinutiaNighbourPair> mReferencePairs;
 	private double matches = 0;
 	private boolean logging = false;
+	private Template template2;
+	private Template template1;
+	private Homogeneouse2DMatrix bestTransformation;
 
 	private static double TOLERANCE = 3.0;
+	private static double ANGLE_TOLERANCE = 10.0;
+
 	private static double FUZZYTOLERANCE = 0.9; // 0 = bad, 1.0 very equal
 
 	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
-			List<MinutiaNighbourPair> pairs2, boolean logging) {
-		this(pairs, pairs2);
+			List<MinutiaNighbourPair> pairs2, Template t, Template t2,
+			boolean logging) {
+		this(pairs, pairs2, t, t2);
 		this.logging = logging;
 
 	}
 
 	public ResultsByTransformation(List<MinutiaNighbourPair> pairs,
-			List<MinutiaNighbourPair> referencePairs) {
+			List<MinutiaNighbourPair> referencePairs, Template t, Template t2) {
 
 		lstTempalatePairs = pairs;
 		lstReferencePairs = referencePairs;
+
+		this.template1 = t;
+		this.template2 = t2;
 
 		// System.out.println(String.format("pairs: %d, referencePairs: %d",pairs.size(),referencePairs.size()));
 
@@ -51,7 +59,9 @@ public class ResultsByTransformation {
 
 	public Homogeneouse2DMatrix getTransformation() {
 		// take the first for now...
-		Homogeneouse2DMatrix bestTransformation = null;
+		if (bestTransformation != null)
+			return bestTransformation;
+		
 		matches = 0;
 		int ibest = -1;
 		int jbest = -1;
@@ -59,18 +69,18 @@ public class ResultsByTransformation {
 			for (int j = 0; j < lstReferencePairs.size(); j++) {
 				double fuzzyValue = lstTempalatePairs.get(i).compareFuzzy(
 						lstReferencePairs.get(j), false);
-				//System.out.println("FuzzyValue was "+fuzzyValue);
+				// System.out.println("FuzzyValue was "+fuzzyValue);
 				// skip if the fuzzyValue is bad
-				if (fuzzyValue < FUZZYTOLERANCE){					
+				if (fuzzyValue < FUZZYTOLERANCE) {
 					continue;
 				}
-				
+
 				Homogeneouse2DMatrix matrix = analystePairs(
 						lstTempalatePairs.get(i), lstReferencePairs.get(j));
+
 				if (matrix != null) {
 					double currentMatches = checkMatches(matrix);
-					if (bestTransformation == null
-							|| matches < currentMatches) {
+					if (bestTransformation == null || matches < currentMatches) {
 						bestTransformation = matrix;
 						matches = currentMatches;
 						ibest = i;
@@ -86,8 +96,10 @@ public class ResultsByTransformation {
 			System.out.println(" to :"
 					+ lstReferencePairs.get(jbest).getFirst().getName() + ":"
 					+ lstReferencePairs.get(jbest).getSecond().getName());
-			
-			System.out.println("angle diff "+lstTempalatePairs.get(ibest).getAngleInDegree()+" vs. "+ lstReferencePairs.get(jbest).getAngleInDegree());
+
+			System.out.println("angle diff "
+					+ lstTempalatePairs.get(ibest).getAngleInDegree() + " vs. "
+					+ lstReferencePairs.get(jbest).getAngleInDegree());
 			System.out.println(" matchrate: " + matches);
 		}
 
@@ -95,35 +107,78 @@ public class ResultsByTransformation {
 	}
 
 	/**
-	 * TODO because know we knew our transformation we should not compare the MinutiaPairs, we should compare
-	 * the two templates.
+	 * Compares all points of two templates
+	 * 
+	 * @param transformation
+	 * @return
+	 */
+	public double checkTemplates(Homogeneouse2DMatrix transformation) {
+
+		return 0;
+	}
+
+	/**
+
+	 * 
 	 * @param transformation
 	 * @return
 	 */
 	public double checkMatches(Homogeneouse2DMatrix transformation) {
 		double matches = 0;
-		for (int i = 0; i < mPairs.size(); i++) {
-			Vector v1, v2, rv1, rv2;
 
-			MinutiaNighbourPair pair = mPairs.get(i);
-			MinutiaNighbourPair referencePair = mReferencePairs.get(i);
-			v1 = pair.getFirst().getVector();
-			v2 = pair.getSecond().getVector();
-			rv1 = referencePair.getFirst().getVector();
-			rv2 = referencePair.getSecond().getVector();
+		System.out.println(transformation.toString());
 
-			rv1 = transformation.multiply(rv1);
-			rv2 = transformation.multiply(rv2);
-			boolean thewebairway = false;
-			if (thewebairway) {
-				if (isInRange(v1, rv1) && isInRange(v2, rv2)) {
-					matches++;
-				}
+		// Get template and match with reference template
+		for (MinutiaPoint p : template2.getMinutiaPoints()) {
+			// Clone and rotate minutia point
+			MinutiaPoint rotatedPoint = transformation
+					.multiply(new MinutiaPoint(p));
+			MinutiaPoint nearestPoint = MinutiaUtils.getNearestPoint(template1,
+					rotatedPoint);
+
+			if (isInRange(rotatedPoint.getVector(), nearestPoint.getVector())
+			// && isSameAngle(rotatedPoint.getAngle(),
+			// nearestPoint.getAngle())
+					&& rotatedPoint.getType() == nearestPoint.getType()) {
+				matches++;
+				if (logging)
+					System.out.println("match between points " + rotatedPoint
+							+ " and " + nearestPoint);
 			} else {
-				matches += getMatchScore(pair, referencePair);
+				if (logging)
+					System.out.println("NO match between points "
+							+ rotatedPoint + " and " + nearestPoint);
 			}
+
 		}
+
+		// for (int i = 0; i < mPairs.size(); i++) {
+		// Vector v1, v2, rv1, rv2;
+		//
+		// MinutiaNighbourPair pair = mPairs.get(i);
+		// MinutiaNighbourPair referencePair = mReferencePairs.get(i);
+		// v1 = pair.getFirst().getVector();
+		// v2 = pair.getSecond().getVector();
+		// rv1 = referencePair.getFirst().getVector();
+		// rv2 = referencePair.getSecond().getVector();
+		//
+		// rv1 = transformation.multiply(rv1);
+		// rv2 = transformation.multiply(rv2);
+		// boolean thewebairway = false;
+		// if (thewebairway) {
+		// if (isInRange(v1, rv1) && isInRange(v2, rv2)) {
+		// matches++;
+		// }
+		// } else {
+		// matches += getMatchScore(pair, referencePair);
+		// }
+		// }
 		return matches;
+	}
+
+	private boolean isSameAngle(int angle, int angle2) {
+
+		return Math.abs(angle2 - angle) <= ANGLE_TOLERANCE;
 	}
 
 	/**
@@ -201,8 +256,8 @@ public class ResultsByTransformation {
 
 	/**
 	 * Wir analyisieren die beiden paare indem wir eine translation und falls
-	 * nötig eine rotation machen und schauen ob die punkte der beiden paare nun
-	 * in der nähe sind. TODO noch nicht gehandelter fall: p(air)1p(oint)1 ist
+	 * nï¿½tig eine rotation machen und schauen ob die punkte der beiden paare nun
+	 * in der nï¿½he sind. TODO noch nicht gehandelter fall: p(air)1p(oint)1 ist
 	 * gleicher punkt wie p(air)2p(oint)2 (momentan wird nur verglichen p1p1 =
 	 * p2p1
 	 * 
@@ -232,10 +287,10 @@ public class ResultsByTransformation {
 		pair2point1 = translation.multiply(pair2point1);
 		pair2point2 = translation.multiply(pair2point2);
 
-		// falls die punkte nun schon in der nähe von einander sind machen wir
+		// falls die punkte nun schon in der nï¿½he von einander sind machen wir
 		// keine rotation
-		// TODO eventuell trozdem eine rotation machen, da es möglich wäre,
-		// dass bei diesem paar der drehpunkt in der nähe ist und der
+		// TODO eventuell trozdem eine rotation machen, da es mï¿½glich wï¿½re,
+		// dass bei diesem paar der drehpunkt in der nï¿½he ist und der
 		// unroatated punkt nur kleine abweichung aufweist.
 		if (isInRange(pair1point2, pair2point2)) {
 			System.out
@@ -247,7 +302,7 @@ public class ResultsByTransformation {
 
 		// wir verschieben die punkte nun so, dass p1p1 (folglich auf p2p1) auf
 		// den nullpunkt damit wir den winkel zwischen p1p2 und p2p2
-		// ausrechnen können.
+		// ausrechnen kï¿½nnen.
 
 		double translatedp1p2x = pair1point2.x - pair1point1.x;
 		double translatedp1p2y = pair1point2.y - pair1point1.y;
@@ -259,8 +314,8 @@ public class ResultsByTransformation {
 				.getAngle(new Vector(translatedp2p2x, translatedp2p2y));
 
 		// nun da wir den winkel haben und unser minutiabild um p1p1 (folglich
-		// auf p2p1) drehen wollen müssen wir zuerst
-		// eine translation auf den null punkt machen, drehen, und zurück
+		// auf p2p1) drehen wollen mï¿½ssen wir zuerst
+		// eine translation auf den null punkt machen, drehen, und zurï¿½ck
 		// translatieren. (umgekehrte reihenfolge da matirx multiplikation)
 
 		Homogeneouse2DMatrix transformation1 = TransformationFactory
@@ -272,7 +327,7 @@ public class ResultsByTransformation {
 
 		// mit dieser multiplikation sollte nun p2p2 auf p1p2 liegen kommen.
 		pair2point2 = transformation1.multiply(pair2point2);
-		// was wier hier prüfen
+		// was wier hier prï¿½fen
 		if (isInRange(pair1point2, pair2point2)) {
 			System.out
 					.println("uiui last change, but you got the rotation baby!");
@@ -296,7 +351,7 @@ public class ResultsByTransformation {
 
 	public void printTransformation() {
 		if (getTransformation() != null) {
-			getTransformation().print();
+			System.out.println(getTransformation());
 		} else {
 			System.out.println("no transformation");
 		}

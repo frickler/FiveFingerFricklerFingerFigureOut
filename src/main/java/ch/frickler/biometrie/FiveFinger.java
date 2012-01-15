@@ -207,6 +207,7 @@ public class FiveFinger implements ComboBoxModel {
 		}
 		matchTemplate();
 	}
+
 	/**
 	 * is called is prev next or match is pushed.
 	 */
@@ -223,12 +224,16 @@ public class FiveFinger implements ComboBoxModel {
 					templates.get(refTemplate));
 
 			ResultsByTransformation rc = new ResultsByTransformation(
-					result.getPairs(), referenceResults.getPairs(), true);
+					result.getPairs(), referenceResults.getPairs(),
+					templates.get(refTemplate), templates.get(currentIndex),
+					true);
 
 			fingerPrintPanel.setTransformation(rc.getTransformation());
 
 			System.out.println("-------");
 			System.out.println("-- TransformationMatrix --");
+			System.out.println("Compare template " + refTemplate + " with "
+					+ currentIndex);
 			if (rc != null) {
 				rc.printTransformation();
 				System.out.println("-------");

@@ -3,23 +3,23 @@ package ch.frickler.biometrie.data;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class Template {
 	private int imageWidth;
 	private int imageHeight;
-	
+
 	private int xResolution;
 	private int yResolution;
-	
+
 	private int center;
-	
+
 	private List<MinutiaPoint> minutiaPoints;
-	
-	public Template() {
+	private int templateIndex;
+
+	public Template(int index) {
+		templateIndex = index;
 		minutiaPoints = new ArrayList<MinutiaPoint>();
 	}
-	
+
 	public int getImageWidth() {
 		return imageWidth;
 	}
@@ -67,6 +67,11 @@ public class Template {
 	public void setCenter(int center) {
 		this.center = center;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Template [xResolution=" + xResolution + ", yResolution="
+				+ yResolution + ", minutiaPoints=" + minutiaPoints + "]";
+	}
+
 }

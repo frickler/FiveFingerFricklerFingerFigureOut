@@ -35,7 +35,7 @@ public class TemplateFileParser {
 				if(template != null)
 				System.out.println("has a MinutiaPoints count of: "+template.getMinutiaPoints().size());
 				System.out.println("new template: "+line);
-				template = new Template();
+				template = new Template(templates.size());
 				templates.add(template);
 			}
 			
@@ -56,7 +56,7 @@ public class TemplateFileParser {
 			}
 			
 			if (line.contains(MINUTIA_INDEX)) {
-				minutiaPoint = new MinutiaPoint(templates.size(),template.getMinutiaPoints().size());
+				minutiaPoint = new MinutiaPoint(templates.size(),template.getMinutiaPoints().size());				
 				template.addMinutiaPoint(minutiaPoint);
 			}
 			

@@ -6,54 +6,37 @@ import java.util.List;
 
 public class ResultsetByNearest {
 
-	List<MinutiaNighbourPair> minutiaList = new ArrayList<MinutiaNighbourPair>();
+	List<MinutiaNighbourPair> minutiaPairList = new ArrayList<MinutiaNighbourPair>();
 
 	public int getSize() {
-		return minutiaList.size();
+		return minutiaPairList.size();
 	}
 
 	public MinutiaNighbourPair getPair(int i) {
-		return minutiaList.get(i);
+		return minutiaPairList.get(i);
 	}
 	
 	public List<MinutiaNighbourPair> getPairs() {
-		return minutiaList;
+		return minutiaPairList;
 	}
 
 	public ResultsetByNearest(Template template) {
 
 		for (MinutiaPoint mp : template.getMinutiaPoints()) {
-			MinutiaPoint near = getNearestPoint(template, mp);
+			MinutiaPoint near = MinutiaUtils.getNearestPoint(template, mp);
 			MinutiaNighbourPair np = new MinutiaNighbourPair(mp, near);
-			minutiaList.add(np);
+			minutiaPairList.add(np);
 		}
 
 	}
 
-	private MinutiaPoint getNearestPoint(Template t, MinutiaPoint current) {
 
-		double minDistance = Integer.MAX_VALUE;
-		MinutiaPoint nearest = null;
-
-		for (MinutiaPoint comp : t.getMinutiaPoints()) {
-			double dist = Math.sqrt(Math.pow(
-					current.getxCoord() - comp.getxCoord(), 2)
-					+ Math.pow(current.getyCoord() - comp.getyCoord(), 2));
-
-			if (dist < minDistance && !current.equals(comp)) {
-				minDistance = dist;
-				nearest = comp;
-				//System.out.println("new nearest dist " + dist);
-			}
-		}
-		return nearest;
-	}
 
 	public String toStringByAngle(boolean newline) {
 		StringBuilder sb = new StringBuilder();
 		
-		Collections.sort(minutiaList);
-		for (MinutiaNighbourPair np : minutiaList) {
+		Collections.sort(minutiaPairList);
+		for (MinutiaNighbourPair np : minutiaPairList) {
 			
 			sb.append(np.getAngleInDegree() + " Typ 1: " + np.getFirst().getType() + " Typ 2: " + np.getSecond().getType() + (newline ? "\n" : ";"));
 		}
