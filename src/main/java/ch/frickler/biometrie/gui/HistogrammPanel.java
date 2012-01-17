@@ -14,22 +14,72 @@ import ch.frickler.biometrie.data.MinutiaNighbourPair;
 
 public class HistogrammPanel extends JPanel {
 
+	public enum Mode {
+		MINUTIA_PAIR, MATCH_WITH_ALL,
+	}
+
 	private static final long serialVersionUID = 1L;
-	private static final int SEPARATION = 36; // ten pillows for 360 degree
-	private static final int FONT_SIZE = 10;
-	private static final int BOARDER_SIZE = 35;
-	private static final Color[] barColors = new Color[] {  Color.RED, new Color(200, 0, 0),Color.BLUE,
-		new Color(0, 0, 200) };
+	private int SEPARATION;
+	private int FONT_SIZE;
+	private int BORDER_SIZE;
+	String[] hBar;
+
+	private static final Color[] barColors = new Color[] { Color.RED,
+			new Color(200, 0, 0), Color.BLUE, new Color(0, 0, 200) };
 
 	private List<List<MinutiaNighbourPair>> neighbourPairs;
 	private int windowWidh;
 	private int windowHeight;
 	private int horiontalPaintGap;
 
+	private Mode mode;
+	private int[] scores;
+	private int threshold;
+
+	public HistogrammPanel(Mode mode, int[] scores) {
+		setBackground(Color.WHITE);
+
+		this.mode = mode;
+		this.scores = scores;
+
+		if (Mode.MINUTIA_PAIR.equals(mode)) {
+			// set up a minutia histogram
+			setUpMinutia();
+		} else {
+			// setup the match with all
+			setUpMatchWithAll();
+		}
+	}
+
 	public HistogrammPanel() {
+		// default to minutia_pair
+		this(Mode.MINUTIA_PAIR, null);
+	}
+
+	public HistogrammPanel(int[] scores, int threshold) {
+		this(Mode.MATCH_WITH_ALL, scores);
+		this.threshold = threshold;
+	}
+
+	private void setUpMinutia() {
 		neighbourPairs = new ArrayList<List<MinutiaNighbourPair>>();
 
-		setBackground(Color.WHITE);
+		// let's parametrize the gui
+		SEPARATION = 36; // ten pillows for 360 degree
+		FONT_SIZE = 10;
+		BORDER_SIZE = 35;
+		hBar = new String[] { "0", "90", "180", "270", "360" };
+	}
+
+	private void setUpMatchWithAll() {
+		// let's parametrize this gui too
+		SEPARATION = scores.length;
+		FONT_SIZE = 10;
+		BORDER_SIZE = 35;
+		hBar = new String[] { "0", Integer.toString(scores.length / 4),
+				Integer.toString(scores.length / 2),
+				Integer.toString(scores.length * 3 / 4),
+				Integer.toString(scores.length) };
 	}
 
 	private void drawRotatedText(Graphics g, double x, double y, double theta,
@@ -65,14 +115,23 @@ public class HistogrammPanel extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 
+		windowWidh = getWidth() - 2 * BORDER_SIZE;
+		windowHeight = getHeight() - 2 * BORDER_SIZE;
+
+		paintHorizontalCaption(g);
+
+		if (Mode.MINUTIA_PAIR.equals(mode)) {
+			paintMinutia(g);
+		} else {
+			paintMatchWithAll(g);
+		}
+
+	}
+
+	private void paintMinutia(Graphics g) {
 		if (neighbourPairs.isEmpty()) {
 			return;
 		}
-
-		windowWidh = getWidth() - 2 * BOARDER_SIZE;
-		windowHeight = getHeight() - 2 * BOARDER_SIZE;
-
-		paintHorizontalCaption(g);
 
 		// Get maximal occurence of angles
 		int maxOccurence = getMaxOccurence();
@@ -84,13 +143,42 @@ public class HistogrammPanel extends JPanel {
 		paintVerticalCaption(g, maxOccurence);
 
 		paintBars(g, maxOccurence);
+	}
 
+	private void paintMatchWithAll(Graphics g) {
+		paintVerticalCaption(g, 100);
+
+		// Calc height of bar for one occurence
+		int barHeightPerOccurence = (windowHeight - BORDER_SIZE) / 100;
+
+		// Paint the scores
+		for (int i = 0; i < scores.length; i++) {
+			// Take alternating color
+			Color color = barColors[i % 2];
+
+			g.setColor(color);
+			int neightbourPairOffset = horiontalPaintGap / scores.length;
+			int coordX = i * horiontalPaintGap + neightbourPairOffset * i
+					+ BORDER_SIZE;
+			g.fillRect(coordX,
+					windowHeight - scores[i] * barHeightPerOccurence,
+					// horiontalPaintGap / scores.length
+					10, scores[i] * barHeightPerOccurence);
+		}
+
+		if (threshold > 0) {
+			g.setColor(Color.BLUE);
+			g.drawLine(0, windowHeight - threshold * barHeightPerOccurence,
+					getWidth(), windowHeight - threshold
+							* barHeightPerOccurence);
+			g.drawString("t=" + threshold, 0, windowHeight - threshold
+					* barHeightPerOccurence);
+		}
 	}
 
 	private void paintBars(Graphics g, int maxOccurence) {
 		// Calc height of bar for one occurence
-		int barHeightPerOccurence = (windowHeight - BOARDER_SIZE)
-				/ maxOccurence;
+		int barHeightPerOccurence = (windowHeight - BORDER_SIZE) / maxOccurence;
 
 		// Paint bars
 		for (int i = 0; i < neighbourPairs.size(); i++) {
@@ -107,7 +195,7 @@ public class HistogrammPanel extends JPanel {
 					int neightbourPairOffset = horiontalPaintGap
 							/ neighbourPairs.size();
 					int coordX = j * horiontalPaintGap + neightbourPairOffset
-							* i + BOARDER_SIZE;
+							* i + BORDER_SIZE;
 					g.fillRect(coordX, windowHeight - amount
 							* barHeightPerOccurence, horiontalPaintGap
 							/ neighbourPairs.size(), amount
@@ -120,15 +208,16 @@ public class HistogrammPanel extends JPanel {
 	private void paintVerticalCaption(Graphics g, int maxOccurence) {
 
 		// Paint vertical help lines
-		g.drawLine(BOARDER_SIZE - 10, windowHeight, BOARDER_SIZE - 10,
-				BOARDER_SIZE);
-		g.drawLine(BOARDER_SIZE - 12, BOARDER_SIZE, BOARDER_SIZE - 8,
-				BOARDER_SIZE);
-		g.drawLine(BOARDER_SIZE - 12, windowHeight, BOARDER_SIZE - 8,
+		g.drawLine(BORDER_SIZE - 10, windowHeight, BORDER_SIZE - 10,
+				BORDER_SIZE);
+		g.drawLine(BORDER_SIZE - 12, BORDER_SIZE, BORDER_SIZE - 8, BORDER_SIZE);
+		g.drawLine(BORDER_SIZE - 12, windowHeight, BORDER_SIZE - 8,
 				windowHeight);
 
-		g.drawString(String.valueOf(maxOccurence), 10, BOARDER_SIZE + FONT_SIZE
-				/ 2);
+		if (Mode.MINUTIA_PAIR.equals(mode)) {
+			g.drawString(String.valueOf(maxOccurence), 10, BORDER_SIZE
+					+ FONT_SIZE / 2);
+		}
 	}
 
 	/**
@@ -154,31 +243,31 @@ public class HistogrammPanel extends JPanel {
 		int lineWidth = ((int) (windowWidh / SEPARATION)) * SEPARATION;
 
 		// Paint horizontal help lines
-		g.drawLine(BOARDER_SIZE, windowHeight, lineWidth + BOARDER_SIZE,
+		g.drawLine(BORDER_SIZE, windowHeight, lineWidth + BORDER_SIZE,
 				windowHeight);
 		horiontalPaintGap = (int) ((lineWidth) / (SEPARATION));
 		for (int i = 0; i <= SEPARATION; i++) {
-			int coordX = i * horiontalPaintGap + BOARDER_SIZE;
+			int coordX = i * horiontalPaintGap + BORDER_SIZE;
 			g.drawLine(coordX, windowHeight + 2, coordX, windowHeight - 2);
 		}
 
 		// Write degrees
 		Font font = new Font("Serif", Font.PLAIN, FONT_SIZE);
 		g.setFont(font);
-		drawRotatedText(g, BOARDER_SIZE - FONT_SIZE / 2, windowHeight
-				+ FONT_SIZE, Math.PI / 2, "0");
-		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 4) + BOARDER_SIZE
+		drawRotatedText(g, BORDER_SIZE - FONT_SIZE / 2, windowHeight
+				+ FONT_SIZE, Math.PI / 2, hBar[0]);
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 4) + BORDER_SIZE
 				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
-				"90");
-		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 2) + BOARDER_SIZE
+				hBar[1]);
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION / 2) + BORDER_SIZE
 				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
-				"180");
+				hBar[2]);
 		drawRotatedText(g, horiontalPaintGap * (3 * SEPARATION / 4)
-				+ BOARDER_SIZE - FONT_SIZE / 2, windowHeight + FONT_SIZE / 2,
-				Math.PI / 2, "270");
-		drawRotatedText(g, horiontalPaintGap * (SEPARATION) + BOARDER_SIZE
+				+ BORDER_SIZE - FONT_SIZE / 2, windowHeight + FONT_SIZE / 2,
+				Math.PI / 2, hBar[3]);
+		drawRotatedText(g, horiontalPaintGap * (SEPARATION) + BORDER_SIZE
 				- FONT_SIZE / 2, windowHeight + FONT_SIZE / 2, Math.PI / 2,
-				"360");
+				hBar[4]);
 	}
 
 	public int[] getAngleHistogramm(List<MinutiaNighbourPair> pairs) {

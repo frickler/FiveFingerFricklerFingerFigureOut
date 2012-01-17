@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -34,6 +35,7 @@ import ch.frickler.biometrie.data.TemplateFileParser;
 import ch.frickler.biometrie.data.TheFiveFingerFricklerAlgorithm;
 import ch.frickler.biometrie.gui.FingerPrintPanel;
 import ch.frickler.biometrie.gui.HistogrammPanel;
+import ch.frickler.biometrie.gui.MatchWithAllPopup;
 
 public class FiveFinger implements ComboBoxModel {
 
@@ -147,6 +149,15 @@ public class FiveFinger implements ComboBoxModel {
 		});
 		buttonPanel.add(matchButton);
 
+		JButton matchWithAllButton = new JButton("MatchWithAll");
+		matchWithAllButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				matchWithAll();
+			}
+		});
+		buttonPanel.add(matchWithAllButton);
+
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
 		JPanel resultPanel = new JPanel(new BorderLayout());
@@ -242,6 +253,52 @@ public class FiveFinger implements ComboBoxModel {
 			}
 		}
 
+	}
+
+	/**
+	 * matches the reference Template with all available templates and displays
+	 * them as a popup
+	 */
+	private void matchWithAll() {
+
+		final Template curr = templates.get(currentIndex);
+		final ResultsetByNearest currRes = new ResultsetByNearest(
+				templates.get(currentIndex));
+
+		int[] scores = new int[templates.size()];
+
+		int t = -1;
+		while (t < 0) {
+			String threshold = JOptionPane
+					.showInputDialog("Please Choose a Threshold between 0 and 100");
+			try {
+				t = Integer.parseInt(threshold);
+			} catch (NumberFormatException e) {
+				t = -1;
+			}
+		}
+
+		for (int i = 0; i < templates.size(); i++) {
+			ResultsetByNearest other = new ResultsetByNearest(templates.get(i));
+			ResultsByTransformation tr = new ResultsByTransformation(
+					currRes.getPairs(), other.getPairs(), curr,
+					templates.get(i));
+			// TODO why do I have to call getTransformation() to get a
+			// matchrate?
+			tr.getTransformation();
+			scores[i] = tr.getMatchRate();
+		}
+
+		System.out.println("Above the threshold " + t
+				+ " are the following templates:");
+		for (int i = 0; i < scores.length; i++) {
+			if (scores[i] >= t)
+				System.out.println("Template #" + i + " with a score of "
+						+ scores[i]);
+		}
+
+		// display them
+		new MatchWithAllPopup(currentIndex, scores, t);
 	}
 
 	private void redrawHistogramm() {
