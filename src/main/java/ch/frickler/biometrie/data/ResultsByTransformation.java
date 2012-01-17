@@ -13,7 +13,7 @@ public class ResultsByTransformation {
 	private List<MinutiaNighbourPair> mPairs;
 	private List<MinutiaNighbourPair> mReferencePairs;
 	private double matches = 0;
-	private boolean logging = false;
+	private boolean logging = true;
 	private Template template2;
 	private Template template1;
 	private Homogeneouse2DMatrix bestTransformation;
@@ -61,7 +61,7 @@ public class ResultsByTransformation {
 		// take the first for now...
 		if (bestTransformation != null)
 			return bestTransformation;
-		
+
 		matches = 0;
 		int ibest = -1;
 		int jbest = -1;
@@ -89,7 +89,7 @@ public class ResultsByTransformation {
 				}
 			}
 		}
-		if (ibest >= 0) {
+		if (ibest >= 0 && logging) {
 			System.out.println("best match comparing pair: "
 					+ lstTempalatePairs.get(ibest).getFirst().getName() + ":"
 					+ lstTempalatePairs.get(ibest).getSecond().getName());
@@ -106,9 +106,8 @@ public class ResultsByTransformation {
 		return bestTransformation;
 	}
 
-	
 	/**
-
+	 * 
 	 * 
 	 * @param transformation
 	 * @return
@@ -225,10 +224,10 @@ public class ResultsByTransformation {
 
 	/**
 	 * Wir analyisieren die beiden paare indem wir eine translation und falls
-	 * n�tig eine rotation machen und schauen ob die punkte der beiden paare nun
-	 * in der n�he sind. TODO noch nicht gehandelter fall: p(air)1p(oint)1 ist
-	 * gleicher punkt wie p(air)2p(oint)2 (momentan wird nur verglichen p1p1 =
-	 * p2p1
+	 * n�tig eine rotation machen und schauen ob die punkte der beiden paare
+	 * nun in der n�he sind. TODO noch nicht gehandelter fall: p(air)1p(oint)1
+	 * ist gleicher punkt wie p(air)2p(oint)2 (momentan wird nur verglichen p1p1
+	 * = p2p1
 	 * 
 	 * @param pair
 	 * @param reference
@@ -236,7 +235,9 @@ public class ResultsByTransformation {
 	 */
 	private Homogeneouse2DMatrix analysePairs(MinutiaNighbourPair pair,
 			MinutiaNighbourPair reference) {
-		System.out.println("\nFind matrix between "+pair+"\n and "+reference);
+		if (logging)
+			System.out.println("\nFind matrix between " + pair + "\n and "
+					+ reference);
 		Vector pair1point1 = new Vector(pair.getFirst().getxCoord(), pair
 				.getFirst().getyCoord());
 		Vector pair1point2 = new Vector(pair.getSecond().getxCoord(), pair
@@ -282,12 +283,14 @@ public class ResultsByTransformation {
 
 		double angleToTurn = new Vector(translatedp1p2x, translatedp1p2y)
 				.getAngle(new Vector(translatedp2p2x, translatedp2p2y));
-		
-		double angleToTurnDegree = new Vector(translatedp1p2x, translatedp1p2y)
-		.getAngleDegree(new Vector(translatedp2p2x, translatedp2p2y));
 
-		System.out.println("angleToTurnDegree: "+angleToTurnDegree+" angleToTurn: "+angleToTurn);
-		
+		double angleToTurnDegree = new Vector(translatedp1p2x, translatedp1p2y)
+				.getAngleDegree(new Vector(translatedp2p2x, translatedp2p2y));
+
+		if (logging)
+			System.out.println("angleToTurnDegree: " + angleToTurnDegree
+					+ " angleToTurn: " + angleToTurn);
+
 		// nun da wir den winkel haben und unser minutiabild um p1p1 (folglich
 		// auf p2p1) drehen wollen m�ssen wir zuerst
 		// eine translation auf den null punkt machen, drehen, und zur�ck
@@ -334,4 +337,5 @@ public class ResultsByTransformation {
 		}
 
 	}
+
 }

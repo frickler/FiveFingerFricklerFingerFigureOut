@@ -336,7 +336,7 @@ public class FiveFinger implements ComboBoxModel {
 						templates.get(j));
 				ResultsByTransformation tr = new ResultsByTransformation(
 						first.getPairs(), second.getPairs(), templates.get(i),
-						templates.get(j));
+						templates.get(j),false);
 				// TODO why do I have to call getTransformation() to get a
 				// matchrate?
 				tr.calculateTransformation();
