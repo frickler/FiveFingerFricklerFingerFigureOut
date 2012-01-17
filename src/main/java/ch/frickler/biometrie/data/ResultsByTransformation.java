@@ -57,7 +57,7 @@ public class ResultsByTransformation {
 
 	}
 
-	public Homogeneouse2DMatrix getTransformation() {
+	public Homogeneouse2DMatrix calculateTransformation() {
 		// take the first for now...
 		if (bestTransformation != null)
 			return bestTransformation;
@@ -75,11 +75,11 @@ public class ResultsByTransformation {
 					continue;
 				}
 
-				Homogeneouse2DMatrix matrix = analystePairs(
+				Homogeneouse2DMatrix matrix = analysePairs(
 						lstTempalatePairs.get(i), lstReferencePairs.get(j));
 
 				if (matrix != null) {
-					double currentMatches = checkMatches(matrix);
+					double currentMatches = calculateMatches(matrix);
 					if (bestTransformation == null || matches < currentMatches) {
 						bestTransformation = matrix;
 						matches = currentMatches;
@@ -106,24 +106,14 @@ public class ResultsByTransformation {
 		return bestTransformation;
 	}
 
-	/**
-	 * Compares all points of two templates
-	 * 
-	 * @param transformation
-	 * @return
-	 */
-	public double checkTemplates(Homogeneouse2DMatrix transformation) {
-
-		return 0;
-	}
-
+	
 	/**
 
 	 * 
 	 * @param transformation
 	 * @return
 	 */
-	public double checkMatches(Homogeneouse2DMatrix transformation) {
+	public double calculateMatches(Homogeneouse2DMatrix transformation) {
 		double matches = 0;
 
 		System.out.println(transformation.toString());
@@ -152,27 +142,6 @@ public class ResultsByTransformation {
 
 		}
 
-		// for (int i = 0; i < mPairs.size(); i++) {
-		// Vector v1, v2, rv1, rv2;
-		//
-		// MinutiaNighbourPair pair = mPairs.get(i);
-		// MinutiaNighbourPair referencePair = mReferencePairs.get(i);
-		// v1 = pair.getFirst().getVector();
-		// v2 = pair.getSecond().getVector();
-		// rv1 = referencePair.getFirst().getVector();
-		// rv2 = referencePair.getSecond().getVector();
-		//
-		// rv1 = transformation.multiply(rv1);
-		// rv2 = transformation.multiply(rv2);
-		// boolean thewebairway = false;
-		// if (thewebairway) {
-		// if (isInRange(v1, rv1) && isInRange(v2, rv2)) {
-		// matches++;
-		// }
-		// } else {
-		// matches += getMatchScore(pair, referencePair);
-		// }
-		// }
 		return matches;
 	}
 
@@ -265,8 +234,9 @@ public class ResultsByTransformation {
 	 * @param reference
 	 * @return
 	 */
-	private Homogeneouse2DMatrix analystePairs(MinutiaNighbourPair pair,
+	private Homogeneouse2DMatrix analysePairs(MinutiaNighbourPair pair,
 			MinutiaNighbourPair reference) {
+		System.out.println("\nFind matrix between "+pair+"\n and "+reference);
 		Vector pair1point1 = new Vector(pair.getFirst().getxCoord(), pair
 				.getFirst().getyCoord());
 		Vector pair1point2 = new Vector(pair.getSecond().getxCoord(), pair
@@ -312,7 +282,12 @@ public class ResultsByTransformation {
 
 		double angleToTurn = new Vector(translatedp1p2x, translatedp1p2y)
 				.getAngle(new Vector(translatedp2p2x, translatedp2p2y));
+		
+		double angleToTurnDegree = new Vector(translatedp1p2x, translatedp1p2y)
+		.getAngleDegree(new Vector(translatedp2p2x, translatedp2p2y));
 
+		System.out.println("angleToTurnDegree: "+angleToTurnDegree+" angleToTurn: "+angleToTurn);
+		
 		// nun da wir den winkel haben und unser minutiabild um p1p1 (folglich
 		// auf p2p1) drehen wollen m�ssen wir zuerst
 		// eine translation auf den null punkt machen, drehen, und zur�ck
@@ -321,7 +296,7 @@ public class ResultsByTransformation {
 		Homogeneouse2DMatrix transformation1 = TransformationFactory
 				.createTranslation(pair1point1.getX(), pair1point1.getY());
 		transformation1 = transformation1.multiply(TransformationFactory
-				.createRotation(-angleToTurn));
+				.createRotation(angleToTurn));
 		transformation1 = transformation1.multiply(TransformationFactory
 				.createTranslation(-pair1point1.getX(), -pair1point1.getY()));
 
@@ -350,8 +325,8 @@ public class ResultsByTransformation {
 	}
 
 	public void printTransformation() {
-		if (getTransformation() != null) {
-			System.out.println(getTransformation());
+		if (calculateTransformation() != null) {
+			System.out.println(calculateTransformation());
 		} else {
 			System.out.println("no transformation");
 		}

@@ -252,7 +252,7 @@ public class FiveFinger implements ComboBoxModel {
 					templates.get(refTemplate), templates.get(currentIndex),
 					true);
 
-			fingerPrintPanel.setTransformation(rc.getTransformation());
+			fingerPrintPanel.setTransformation(rc.calculateTransformation());
 
 			System.out.println("-------");
 			System.out.println("-- TransformationMatrix --");
@@ -301,7 +301,7 @@ public class FiveFinger implements ComboBoxModel {
 					templates.get(i));
 			// TODO why do I have to call getTransformation() to get a
 			// matchrate?
-			tr.getTransformation();
+			tr.calculateTransformation();
 			scores[i] = tr.getMatchRate();
 		}
 
@@ -339,7 +339,7 @@ public class FiveFinger implements ComboBoxModel {
 						templates.get(j));
 				// TODO why do I have to call getTransformation() to get a
 				// matchrate?
-				tr.getTransformation();
+				tr.calculateTransformation();
 				row.append(tr.getMatchRate() + ";");
 			}
 			data.add(row.toString());

@@ -21,7 +21,7 @@ public class TheFiveFingerFricklerAlgorithm {
 
 					ResultsByTransformation result = new ResultsByTransformation(
 							res.getPairs(), res2.getPairs(), t, t2);
-					if (result.getTransformation() != null) {
+					if (result.calculateTransformation() != null) {
 						int percent = result.getMatchRate();
 						try {
 							if (percent > 60) {

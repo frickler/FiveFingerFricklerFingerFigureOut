@@ -62,4 +62,8 @@ public class Vector {
 		double y = Math.abs(getY()-r2.getY());
 	    return Math.sqrt(Math.pow(x, 2)+Math.pow(y,2)); // pütagoras
 	}
+
+	public String toString(){
+		return "x: "+x+" y: "+y;
+	}
 }
