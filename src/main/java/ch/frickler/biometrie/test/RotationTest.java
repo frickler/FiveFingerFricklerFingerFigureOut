@@ -207,7 +207,7 @@ public class RotationTest {
 		Homogeneouse2DMatrix transformation1 = TransformationFactory
 				.createTranslation(pair1point1.getX(), pair1point1.getY());
 		transformation1 = transformation1.multiply(TransformationFactory
-				.createRotation(-angleToTurnDegree));
+				.createRotation(-angleToTurn));
 		transformation1 = transformation1.multiply(TransformationFactory
 				.createTranslation(-pair1point1.getX(), -pair1point1.getY()));
 		
@@ -219,27 +219,27 @@ public class RotationTest {
 		Assert.assertEquals(pair2point2.y, pair1point2.y);
 
 	}
+	
 	@Test
 	public void RotationTestForward(){
-		Homogeneouse2DMatrix transformation = TransformationFactory.createRotation(-Math.PI/2);
+		Homogeneouse2DMatrix transformation = TransformationFactory.createRotation(Math.PI/2);
 		Vector v = new Vector(50,0);
 		Vector rotated = transformation.multiply(v);
 		
-		Assert.assertEquals(rotated.x, 0);
-		Assert.assertEquals(rotated.y, -50);		
+		Assert.assertEquals(rotated.x, 0.0);
+		Assert.assertEquals(rotated.y, -50.0);		
 	}
 	
 	@Test
 	public void RotationTestBackward(){
-		 double angle = 90.0 * 2.0 * Math.PI/360.0;
-		Homogeneouse2DMatrix transformation = TransformationFactory.createRotation(angle);
+		 double radian = 90.0 * Math.PI / 180 ;
+		Homogeneouse2DMatrix transformation = TransformationFactory.createRotation(radian);
 		Vector v = new Vector(50,0);
 		Vector rotated = transformation.multiply(v);
 		transformation.print();
-		Assert.assertEquals(rotated.x, 0);
-		Assert.assertEquals(rotated.y, 50);		
+		Assert.assertEquals(rotated.x, 0.0);
+		Assert.assertEquals(rotated.y, -50.0);		
 	}
-	
 
 	private MinutiaNighbourPair GetPair(int x, int y, int x2, int y2) {
 		MinutiaPoint first = new MinutiaPoint(-1, 1);

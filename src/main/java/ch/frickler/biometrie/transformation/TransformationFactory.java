@@ -2,7 +2,7 @@ package ch.frickler.biometrie.transformation;
 
 public class TransformationFactory {
 	public static Homogeneouse2DMatrix createRotation(double angle) {
-		Homogeneouse2DMatrix rotation = new Homogeneouse2DMatrix(Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle), 0.0, 0.0);
+		Homogeneouse2DMatrix rotation = new Homogeneouse2DMatrix(Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0.0, 0.0);
 		return rotation;
 	}
 	

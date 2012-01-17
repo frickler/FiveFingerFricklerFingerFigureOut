@@ -48,6 +48,11 @@ public class Homogeneouse2DMatrix {
 		result.x = getA() * v.getX() + getB() * v.getY() + getTx() * 1;
 		result.y = getC() * v.getX() + getD() * v.getY() + getTy() * 1;
 
+		// floatingpoint fähler
+		int round = 1000000000;
+		result.x = Math.round(result.x * round)/round;
+		result.y = Math.round(result.y * round)/round;
+		
 		return result;
 	}
 
