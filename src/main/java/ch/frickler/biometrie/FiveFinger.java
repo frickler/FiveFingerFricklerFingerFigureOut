@@ -10,12 +10,17 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,9 +32,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
-import ch.frickler.biometrie.data.MinutiaNighbourPair;
-import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.ResultsByTransformation;
+import ch.frickler.biometrie.data.ResultsetByNearest;
 import ch.frickler.biometrie.data.Template;
 import ch.frickler.biometrie.data.TemplateFileParser;
 import ch.frickler.biometrie.data.TheFiveFingerFricklerAlgorithm;
@@ -158,6 +162,15 @@ public class FiveFinger implements ComboBoxModel {
 		});
 		buttonPanel.add(matchWithAllButton);
 
+		JButton export = new JButton("Export Scores");
+		export.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				export();
+			}
+		});
+		buttonPanel.add(export);
+
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 
 		JPanel resultPanel = new JPanel(new BorderLayout());
@@ -261,22 +274,25 @@ public class FiveFinger implements ComboBoxModel {
 	 */
 	private void matchWithAll() {
 
-		final Template curr = templates.get(currentIndex);
-		final ResultsetByNearest currRes = new ResultsetByNearest(
-				templates.get(currentIndex));
-
-		int[] scores = new int[templates.size()];
-
+		// get a user chose threshold
 		int t = -1;
 		while (t < 0) {
 			String threshold = JOptionPane
 					.showInputDialog("Please Choose a Threshold between 0 and 100");
+			if (threshold == null)
+				return;
 			try {
 				t = Integer.parseInt(threshold);
 			} catch (NumberFormatException e) {
 				t = -1;
 			}
 		}
+
+		final Template curr = templates.get(currentIndex);
+		final ResultsetByNearest currRes = new ResultsetByNearest(
+				templates.get(currentIndex));
+
+		int[] scores = new int[templates.size()];
 
 		for (int i = 0; i < templates.size(); i++) {
 			ResultsetByNearest other = new ResultsetByNearest(templates.get(i));
@@ -299,6 +315,55 @@ public class FiveFinger implements ComboBoxModel {
 
 		// display them
 		new MatchWithAllPopup(currentIndex, scores, t);
+	}
+
+	/**
+	 * calculates the scores for every template with every other and exports a
+	 * csv file
+	 */
+	private void export() {
+		StringBuffer header = new StringBuffer();
+		List<String> data = new ArrayList<String>();
+		header.append("Minutia;");
+		for (int i = 0; i < templates.size(); i++) {
+			header.append(i + ";");
+			StringBuffer row = new StringBuffer();
+			row.append(i + ";");
+			for (int j = 0; j < templates.size(); j++) {
+				ResultsetByNearest first = new ResultsetByNearest(
+						templates.get(i));
+				ResultsetByNearest second = new ResultsetByNearest(
+						templates.get(j));
+				ResultsByTransformation tr = new ResultsByTransformation(
+						first.getPairs(), second.getPairs(), templates.get(i),
+						templates.get(j));
+				// TODO why do I have to call getTransformation() to get a
+				// matchrate?
+				tr.getTransformation();
+				row.append(tr.getMatchRate() + ";");
+			}
+			data.add(row.toString());
+		}
+
+		// export the data to a csv file
+		JFileChooser jf = new JFileChooser();
+		int returnVal = jf.showOpenDialog(frame);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File f = jf.getSelectedFile();
+			try {
+				if (!f.exists())
+					f.createNewFile();
+				FileWriter fw = new FileWriter(f);
+				fw.write(header.toString()+"\n");
+				for (String s : data) {
+					fw.write(s+"\n");
+				}
+				fw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 	private void redrawHistogramm() {
