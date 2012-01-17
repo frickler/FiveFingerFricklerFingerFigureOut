@@ -319,8 +319,10 @@ public class ResultsByTransformation {
 
 	public int getMatchRate() {
 		int matchs = (int) getMatches();
-		int min = Math.min(mPairs.size(), lstReferencePairs.size());
-		int percent = (int) Math.round((double) matchs / (double) min * 100);
+		// we use the amount of template2,because in calculateMatches() we
+		// search the points of template2 and not otherwise.
+		int amount = template2.getMinutiaPoints().size();
+		int percent = (int) Math.round((double) matchs / (double) amount * 100);
 		return percent;
 	}
 

@@ -396,9 +396,12 @@ public class FiveFinger implements ComboBoxModel {
 		FiveFinger application = new FiveFinger();
 		application.initGui(width, height, templates);
 
+		//if you wanna do this, do it else where
+		/*
 		TheFiveFingerFricklerAlgorithm tFFFA = new TheFiveFingerFricklerAlgorithm(
 				templates);
 		tFFFA.process();
+		*/
 	}
 
 	@Override
