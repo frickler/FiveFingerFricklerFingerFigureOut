@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 #
-# a parser for this strange text file
+# this is a parser for Isotemplate text file. it's just a quick hack to prototype a possible parsing algorithm
+# the final program will later be implemented in java.
 #
-# available under the free beer license
+# available under the free beer license ;-)
 #
 # USAGE ./parser.py path_to_your_templates_file
 # 
@@ -115,6 +116,6 @@ USAGE: ./parser.py PATH_TO_YOUR_FILE
     fingers = parseFile(sys.argv[1])
 
     if(PLOT):
-        # debugging... show 10 fingers
+        # debugging... show 10 templates
         for f in fingers[:10]:
             plot(f)
